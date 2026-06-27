@@ -90,7 +90,7 @@ export async function openKhrFile(): Promise<File | null> {
     const { open } = await import('@tauri-apps/plugin-dialog')
     const picked = await open({
       multiple: false,
-      filters: [{ name: 'Koharu archive', extensions: ['khr'] }],
+      filters: [{ name: 'Lilith archive', extensions: ['khr'] }],
     })
     if (!picked || typeof picked !== 'string') return null
     const [file] = await readTauriFiles([picked])
@@ -102,7 +102,7 @@ export async function openKhrFile(): Promise<File | null> {
     const result = await fileOpen({
       multiple: false,
       extensions: ['.khr'],
-      description: 'Koharu archive',
+      description: 'Lilith archive',
     })
     return Array.isArray(result) ? (result[0] ?? null) : result
   } catch (e) {

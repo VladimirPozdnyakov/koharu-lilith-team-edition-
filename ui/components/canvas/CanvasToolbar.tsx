@@ -322,7 +322,7 @@ function LlmStatusPopover() {
           data-llm-loading={indicatorBusy ? 'true' : 'false'}
           className={`flex h-6 cursor-pointer items-center gap-1.5 rounded-full px-2.5 text-[11px] font-medium shadow-sm transition hover:opacity-80 ${
             llmReady
-              ? 'bg-rose-400 text-white ring-1 ring-rose-400/30'
+              ? 'bg-primary text-white ring-1 ring-primary/30'
               : indicatorBusy
                 ? 'bg-amber-400 text-white ring-1 ring-amber-400/30'
                 : 'bg-muted text-muted-foreground ring-1 ring-border/50'

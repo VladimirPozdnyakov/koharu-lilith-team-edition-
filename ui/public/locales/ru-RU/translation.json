@@ -43,7 +43,7 @@
     "runCustomAll": "Запуск настраиваемого (Все страницы)"
   },
   "welcome": {
-    "title": "Koharu",
+    "title": "Koharu (Lilith Team Edition)",
     "subtitle": "Рабочая область перевода манги",
     "new": "Новый проект",
     "newDescription": "Начните с пустого проекта, импортируйте страницы позже",
@@ -307,7 +307,7 @@
     "httpProxyDescription": "Используется для загрузки среды и моделей. Изменения сохраняются автоматически.",
     "title": "Настройки",
     "appearance": "Внешний вид",
-    "appearanceDescription": "Настройте внешний вид Koharu.",
+    "appearanceDescription": "Настройте внешний вид Koharu (Lilith Team Edition).",
     "theme": "Тема",
     "themeDescription": "Выберите предпочтительную цветовую схему.",
     "themeLight": "Светлая",
@@ -369,7 +369,7 @@
     "apiKeySave": "Сохранить",
     "apiKeySaved": "Сохранено!",
     "dataPath": "Путь к данным",
-    "dataPathDescription": "Koharu хранит модели, пакеты среды, манифесты страниц и изображения в этой директории. Изменение пути требует перезапуска приложения.",
+    "dataPathDescription": "Koharu (Lilith Team Edition) хранит модели, пакеты среды, манифесты страниц и изображения в этой директории. Изменение пути требует перезапуска приложения.",
     "dataPathApply": "Применить и перезапустить",
     "dataPathApplying": "Применяется...",
     "dataPathDesktopOnly": "Настройки среды выполнения доступны только в настольном приложении.",
@@ -406,14 +406,14 @@
   "updater": {
     "available": {
       "title": "Доступно обновление",
-      "description": "Koharu <strong>{{version}}</strong> готов к установке"
+      "description": "Koharu (Lilith Team Edition) <strong>{{version}}</strong> готов к установке"
     },
     "noNotes": "Примечания к выпуску отсутствуют.",
     "later": "Позже",
     "update": "Обновить",
     "downloading": {
       "title": "Загрузка обновления…",
-      "subtitle": "Koharu {{version}}"
+      "subtitle": "Koharu (Lilith Team Edition) {{version}}"
     },
     "error": {
       "title": "Ошибка обновления",

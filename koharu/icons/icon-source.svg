@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- Lilith Team Edition — abstract placeholder logo -->
+  <!-- Rounded coral-red squircle with a geometric "L" mark -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#EC6A5E"/>
+      <stop offset="100%" stop-color="#D9463B"/>
+    </linearGradient>
+  </defs>
+  <!-- Squircle background -->
+  <rect x="16" y="16" width="480" height="480" rx="112" ry="112" fill="url(#bg)"/>
+  <!-- Geometric "L" mark, white -->
+  <path d="M 200 132 L 244 132 L 244 348 L 352 348 L 352 392 L 200 392 Z" fill="#FFFFFF"/>
+  <!-- Accent dot -->
+  <circle cx="356" cy="168" r="26" fill="#FFFFFF" opacity="0.92"/>
+</svg>

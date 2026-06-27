@@ -265,14 +265,14 @@ function BlockCard({
           <div className='flex min-w-0 flex-1 items-center gap-1'>
             <span
               className={`shrink-0 rounded-sm px-1 py-0.5 text-[9px] font-medium uppercase ${
-                hasOcr ? 'bg-rose-400/70 text-white' : 'bg-muted text-muted-foreground/50'
+                hasOcr ? 'bg-primary/70 text-white' : 'bg-muted text-muted-foreground/50'
               }`}
             >
               {t('textBlocks.ocrBadge')}
             </span>
             <span
               className={`shrink-0 rounded-sm px-1 py-0.5 text-[9px] font-medium uppercase ${
-                hasTranslation ? 'bg-rose-400/70 text-white' : 'bg-muted text-muted-foreground/50'
+                hasTranslation ? 'bg-primary/70 text-white' : 'bg-muted text-muted-foreground/50'
               }`}
             >
               {t('textBlocks.translationBadge')}
@@ -312,7 +312,7 @@ function BlockCard({
                         size='icon-xs'
                         disabled={processing}
                         onClick={onDelete}
-                        className='size-5 text-rose-600 hover:text-rose-600'
+                        className='size-5 text-destructive hover:text-destructive'
                       >
                         <Trash2Icon className='size-3' />
                       </Button>

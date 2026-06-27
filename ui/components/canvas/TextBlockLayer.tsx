@@ -253,12 +253,12 @@ function TextBlockItem({
         className={`absolute inset-0 rounded-md ${
           selected
             ? 'border-[3px] border-primary bg-primary/15'
-            : 'border-2 border-rose-400/60 bg-rose-400/5'
+            : 'border-2 border-primary/60 bg-primary/5'
         }`}
       />
       <div
         className={`pointer-events-none absolute -top-1.5 -left-1.5 flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-semibold text-white shadow ${
-          selected ? 'bg-primary' : 'bg-rose-400'
+          selected ? 'bg-primary' : 'bg-primary'
         }`}
       >
         {index + 1}
