@@ -348,7 +348,7 @@ export function SettingsDialog({
         <div className="flex h-full">
           {/* Sidebar */}
           <nav className="flex w-[180px] shrink-0 flex-col gap-1 border-r border-border bg-muted/30 p-3">
-            <p className="mb-3 px-3 text-[10px] font-semibold tracking-widest text-muted-foreground uppercase">
+            <p className="mb-3 px-3 text-[11px] font-medium text-muted-foreground">
               {t("settings.title")}
             </p>
             {TABS.map(({ id, icon: Icon, labelKey }) => (

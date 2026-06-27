@@ -106,7 +106,7 @@ export function TextBlocksPanel() {
 
   return (
     <div className='flex min-h-0 flex-1 flex-col' data-testid='panels-textblocks'>
-      <div className='flex items-center justify-between border-b border-border px-2 py-1.5 text-xs font-semibold tracking-wide text-muted-foreground uppercase'>
+      <div className='flex items-center justify-between border-b border-border px-2 py-1.5 text-xs font-medium text-muted-foreground'>
         <span data-testid='textblocks-count' data-count={textNodes.length}>
           {t('textBlocks.title', { count: textNodes.length })}
         </span>
@@ -285,7 +285,7 @@ function BlockCard({
         <AccordionContent className='px-2 pt-1.5 pb-2 shadow-[inset_0_1px_0_0_var(--color-border)]'>
           <div className='space-y-1.5'>
             <div className='flex flex-col gap-0.5'>
-              <span className='text-[10px] text-muted-foreground uppercase'>
+              <span className='text-[10px] text-muted-foreground'>
                 {t('textBlocks.ocrLabel')}
               </span>
               <DraftTextarea
@@ -299,7 +299,7 @@ function BlockCard({
             </div>
             <div className='flex flex-col gap-0.5'>
               <div className='flex items-center justify-between'>
-                <span className='text-[10px] text-muted-foreground uppercase'>
+                <span className='text-[10px] text-muted-foreground'>
                   {t('textBlocks.translationLabel')}
                 </span>
                 <div className='flex items-center gap-0.5'>

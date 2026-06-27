@@ -148,7 +148,7 @@ export function Navigator() {
     >
       <div className='flex items-center justify-between border-b border-border px-2 py-1.5'>
         <div>
-          <p className='text-xs tracking-wide text-muted-foreground uppercase'>
+          <p className='text-xs font-medium text-muted-foreground'>
             {t('navigator.title')}
           </p>
           <p className='text-xs font-semibold text-foreground'>

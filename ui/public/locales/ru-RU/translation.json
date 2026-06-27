@@ -208,6 +208,7 @@
     "effectItalic": "Курсив",
     "effectBold": "Жирный",
     "effectBorder": "Обводка",
+    "advanced": "Дополнительно",
     "strokeColorLabel": "Цвет обводки",
     "strokeWidthLabel": "Толщина обводки",
     "fontWeights": {

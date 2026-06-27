@@ -5,6 +5,7 @@ import {
   AlignLeftIcon,
   AlignRightIcon,
   BoldIcon,
+  ChevronDownIcon,
   ItalicIcon,
   MinusIcon,
   PlusIcon,
@@ -147,6 +148,7 @@ export function RenderControlsPanel() {
 
   const sectionRef = useRef<HTMLDivElement>(null)
   const [sectionWidth, setSectionWidth] = useState<number>(0)
+  const [advancedOpen, setAdvancedOpen] = useState(false)
 
   useEffect(() => {
     if (!sectionRef.current) return
@@ -392,7 +394,7 @@ export function RenderControlsPanel() {
         <span
           data-testid='render-scope-indicator'
           className={cn(
-            'rounded-full border px-2 py-0.5 text-[10px] font-medium tracking-wide uppercase',
+            'rounded-full border px-2 py-0.5 text-[10px] font-medium',
             scopeToneClass,
           )}
         >
@@ -403,10 +405,10 @@ export function RenderControlsPanel() {
       {/* Font + Color */}
       <div className='flex flex-col gap-0.5' ref={sectionRef}>
         <div className='flex items-baseline justify-between'>
-          <span className='text-[10px] font-medium text-muted-foreground uppercase'>
+          <span className='text-[11px] font-medium text-muted-foreground'>
             {t('render.fontLabel')}
           </span>
-          <span className='text-[10px] font-medium text-muted-foreground uppercase'>
+          <span className='text-[11px] font-medium text-muted-foreground'>
             {t('render.fontColorLabel')}
           </span>
         </div>
@@ -540,13 +542,13 @@ export function RenderControlsPanel() {
 
       {/* Size / Effect / Align */}
       <div className='grid w-full grid-cols-[minmax(0,1fr)_auto_auto] items-end gap-x-1.5'>
-        <span className='text-[10px] font-medium text-muted-foreground uppercase'>
+        <span className='text-[11px] font-medium text-muted-foreground'>
           {t('render.fontSizeLabel')}
         </span>
-        <span className='text-[10px] font-medium text-muted-foreground uppercase'>
+        <span className='text-[11px] font-medium text-muted-foreground'>
           {t('render.effectLabel')}
         </span>
-        <span className='text-[10px] font-medium text-muted-foreground uppercase'>
+        <span className='text-[11px] font-medium text-muted-foreground'>
           {t('render.alignLabel')}
         </span>
 
@@ -671,102 +673,118 @@ export function RenderControlsPanel() {
         </div>
       </div>
 
-      {/* Border / Stroke */}
-      <div className='flex flex-col gap-0.5'>
-        <span className='text-[10px] font-medium text-muted-foreground uppercase'>
-          {t('render.effectBorder')}
-        </span>
-        <div className='flex min-w-0 items-center gap-1'>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant='outline'
-                size='icon-sm'
-                data-testid='render-stroke-enable'
-                className={cn(
-                  'size-7 shrink-0',
-                  currentStroke.enabled &&
-                    'border-primary bg-primary text-primary-foreground hover:bg-primary/90',
-                )}
-                onClick={() =>
-                  applyStrokeSetting({ ...currentStroke, enabled: !currentStroke.enabled })
-                }
-              >
-                <SquareIcon className='size-3.5' />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side='bottom' sideOffset={4}>
+      {/* Border / Stroke — collapsed under "Advanced" to reduce clutter */}
+      <div className='flex flex-col gap-1'>
+        <button
+          type='button'
+          onClick={() => setAdvancedOpen((v) => !v)}
+          aria-expanded={advancedOpen}
+          className='flex items-center gap-1 py-0.5 text-[11px] font-medium text-muted-foreground transition hover:text-foreground'
+        >
+          <ChevronDownIcon
+            className={cn('size-3.5 transition-transform', !advancedOpen && '-rotate-90')}
+          />
+          {t('render.advanced')}
+        </button>
+
+        {advancedOpen && (
+          <div className='flex flex-col gap-0.5'>
+            <span className='text-[10px] font-medium text-muted-foreground'>
               {t('render.effectBorder')}
-            </TooltipContent>
-          </Tooltip>
+            </span>
+            <div className='flex min-w-0 items-center gap-1'>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant='outline'
+                    size='icon-sm'
+                    data-testid='render-stroke-enable'
+                    className={cn(
+                      'size-7 shrink-0',
+                      currentStroke.enabled &&
+                        'border-primary bg-primary text-primary-foreground hover:bg-primary/90',
+                    )}
+                    onClick={() =>
+                      applyStrokeSetting({ ...currentStroke, enabled: !currentStroke.enabled })
+                    }
+                  >
+                    <SquareIcon className='size-3.5' />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side='bottom' sideOffset={4}>
+                  {t('render.effectBorder')}
+                </TooltipContent>
+              </Tooltip>
 
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div>
-                <ColorPicker
-                  value={currentStrokeColorHex}
-                  disabled={!hasNodes}
-                  triggerTestId='render-stroke-color-trigger'
-                  pickerTestId='render-stroke-color-picker'
-                  swatchTestId='render-stroke-color-swatch'
-                  inputTestId='render-stroke-color-input'
-                  pickButtonTestId='render-stroke-color-pick'
-                  onChange={(hex) => {
-                    applyStrokeSetting({
-                      ...currentStroke,
-                      color: hexToColor(
-                        hex,
-                        (currentStroke.color ?? DEFAULT_STROKE_COLOR)[3] ?? 255,
-                      ),
-                    })
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div>
+                    <ColorPicker
+                      value={currentStrokeColorHex}
+                      disabled={!hasNodes}
+                      triggerTestId='render-stroke-color-trigger'
+                      pickerTestId='render-stroke-color-picker'
+                      swatchTestId='render-stroke-color-swatch'
+                      inputTestId='render-stroke-color-input'
+                      pickButtonTestId='render-stroke-color-pick'
+                      onChange={(hex) => {
+                        applyStrokeSetting({
+                          ...currentStroke,
+                          color: hexToColor(
+                            hex,
+                            (currentStroke.color ?? DEFAULT_STROKE_COLOR)[3] ?? 255,
+                          ),
+                        })
+                      }}
+                      className='size-7'
+                    />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side='bottom' sideOffset={4}>
+                  {t('render.strokeColorLabel')}
+                </TooltipContent>
+              </Tooltip>
+
+              <div className='flex min-w-0 flex-1 items-center rounded-md border border-input bg-background shadow-xs'>
+                <Button
+                  type='button'
+                  variant='ghost'
+                  size='icon-sm'
+                  className='size-7 shrink-0 rounded-r-none border-r'
+                  onClick={() => updateStrokeWidth(currentStrokeWidth - STROKE_WIDTH_STEP)}
+                >
+                  <MinusIcon className='size-3' />
+                </Button>
+                <Input
+                  type='number'
+                  step={String(STROKE_WIDTH_STEP)}
+                  min={String(MIN_STROKE_WIDTH)}
+                  max={String(MAX_STROKE_WIDTH)}
+                  inputMode='decimal'
+                  className='h-7 min-w-0 flex-1 [appearance:textfield] rounded-none border-0 px-1 text-center text-xs shadow-none focus-visible:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none'
+                  data-testid='render-stroke-width'
+                  value={
+                    Number.isFinite(currentStrokeWidth) ? currentStrokeWidth : DEFAULT_STROKE_WIDTH
+                  }
+                  onChange={(event) => {
+                    const parsed = Number.parseFloat(event.target.value)
+                    if (!Number.isFinite(parsed)) return
+                    updateStrokeWidth(parsed)
                   }}
-                  className='size-7'
                 />
+                <Button
+                  type='button'
+                  variant='ghost'
+                  size='icon-sm'
+                  className='size-7 shrink-0 rounded-l-none border-l'
+                  onClick={() => updateStrokeWidth(currentStrokeWidth + STROKE_WIDTH_STEP)}
+                >
+                  <PlusIcon className='size-3' />
+                </Button>
               </div>
-            </TooltipTrigger>
-            <TooltipContent side='bottom' sideOffset={4}>
-              {t('render.strokeColorLabel')}
-            </TooltipContent>
-          </Tooltip>
-
-          <div className='flex min-w-0 flex-1 items-center rounded-md border border-input bg-background shadow-xs'>
-            <Button
-              type='button'
-              variant='ghost'
-              size='icon-sm'
-              className='size-7 shrink-0 rounded-r-none border-r'
-              onClick={() => updateStrokeWidth(currentStrokeWidth - STROKE_WIDTH_STEP)}
-            >
-              <MinusIcon className='size-3' />
-            </Button>
-            <Input
-              type='number'
-              step={String(STROKE_WIDTH_STEP)}
-              min={String(MIN_STROKE_WIDTH)}
-              max={String(MAX_STROKE_WIDTH)}
-              inputMode='decimal'
-              className='h-7 min-w-0 flex-1 [appearance:textfield] rounded-none border-0 px-1 text-center text-xs shadow-none focus-visible:ring-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none'
-              data-testid='render-stroke-width'
-              value={
-                Number.isFinite(currentStrokeWidth) ? currentStrokeWidth : DEFAULT_STROKE_WIDTH
-              }
-              onChange={(event) => {
-                const parsed = Number.parseFloat(event.target.value)
-                if (!Number.isFinite(parsed)) return
-                updateStrokeWidth(parsed)
-              }}
-            />
-            <Button
-              type='button'
-              variant='ghost'
-              size='icon-sm'
-              className='size-7 shrink-0 rounded-l-none border-l'
-              onClick={() => updateStrokeWidth(currentStrokeWidth + STROKE_WIDTH_STEP)}
-            >
-              <PlusIcon className='size-3' />
-            </Button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )

@@ -32,15 +32,11 @@ export function Panels() {
         <TabsList className='m-2 mb-0 grid w-[calc(100%-1rem)] grid-cols-2 bg-muted/70'>
           <TabsTrigger value='layers' data-testid='panels-tab-layers' className='gap-1'>
             <LayersIcon className='size-3.5' />
-            <span className='text-xs font-semibold tracking-wide uppercase'>
-              {t('layers.title')}
-            </span>
+            <span className='text-xs font-medium'>{t('layers.title')}</span>
           </TabsTrigger>
           <TabsTrigger value='layout' data-testid='panels-tab-layout' className='gap-1'>
             <SlidersHorizontalIcon className='size-3.5' />
-            <span className='text-xs font-semibold tracking-wide uppercase'>
-              {t('panels.render')}
-            </span>
+            <span className='text-xs font-medium'>{t('panels.render')}</span>
           </TabsTrigger>
         </TabsList>
 
@@ -77,15 +73,11 @@ export function Panels() {
           <TabsList className='m-2 mb-0 grid w-[calc(100%-1rem)] grid-cols-2 bg-muted/70'>
             <TabsTrigger value='text' data-testid='panels-tab-textblocks' className='gap-1'>
               <TypeIcon className='size-3.5' />
-              <span className='text-xs font-semibold tracking-wide uppercase'>
-                {t('layers.textBlocks')}
-              </span>
+              <span className='text-xs font-medium'>{t('layers.textBlocks')}</span>
             </TabsTrigger>
             <TabsTrigger value='ai' data-testid='panels-tab-ai' className='gap-1'>
               <SparklesIcon className='size-3.5' />
-              <span className='text-xs font-semibold tracking-wide uppercase'>
-                {t('panels.ai')}
-              </span>
+              <span className='text-xs font-medium'>{t('panels.ai')}</span>
             </TabsTrigger>
           </TabsList>
         )}

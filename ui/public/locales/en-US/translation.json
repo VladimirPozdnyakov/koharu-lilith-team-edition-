@@ -232,6 +232,7 @@
     "effectItalic": "Italic",
     "effectBold": "Bold",
     "effectBorder": "Border",
+    "advanced": "Advanced",
     "strokeColorLabel": "Stroke color",
     "strokeWidthLabel": "Stroke width",
     "fontLabel": "Font",

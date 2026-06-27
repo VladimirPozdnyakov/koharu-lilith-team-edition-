@@ -43,7 +43,7 @@ export function AppInitializationSkeleton() {
           draggable={false}
         />
         <div className="flex flex-col items-center gap-1">
-          <h1 className="text-lg font-semibold tracking-widest text-foreground uppercase">
+          <h1 className="text-lg font-semibold text-foreground">
             Koharu (Lilith Team Edition)
           </h1>
           <p className="text-xs text-muted-foreground">
