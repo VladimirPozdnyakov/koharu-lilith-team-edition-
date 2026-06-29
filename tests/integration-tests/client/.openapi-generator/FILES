@@ -7,10 +7,6 @@ docs/AppConfig.md
 docs/AppEvent.md
 docs/AppEventOneOf.md
 docs/AppEventOneOf1.md
-docs/AppEventOneOf10.md
-docs/AppEventOneOf11.md
-docs/AppEventOneOf12.md
-docs/AppEventOneOf13.md
 docs/AppEventOneOf2.md
 docs/AppEventOneOf3.md
 docs/AppEventOneOf4.md
@@ -20,9 +16,11 @@ docs/AppEventOneOf7.md
 docs/AppEventOneOf8.md
 docs/AppEventOneOf9.md
 docs/ConfigPatch.md
+docs/CreatePagesFromPathsRequest.md
 docs/CreatePagesResponse.md
 docs/CreateProjectRequest.md
 docs/DataConfig.md
+docs/DataConfigPatch.md
 docs/DefaultApi.md
 docs/DownloadProgress.md
 docs/DownloadStatus.md
@@ -32,7 +30,6 @@ docs/DownloadStatusOneOf2.md
 docs/DownloadStatusOneOf3.md
 docs/EngineCatalog.md
 docs/EngineCatalogEntry.md
-docs/ErrorEvent.md
 docs/ExportFormat.md
 docs/ExportProjectRequest.md
 docs/FontFaceInfo.md
@@ -50,6 +47,9 @@ docs/ImageRole.md
 docs/JobFinishedEvent.md
 docs/JobStatus.md
 docs/JobSummary.md
+docs/JobWarningEvent.md
+docs/ListDownloadsResponse.md
+docs/ListOperationsResponse.md
 docs/ListProjectsResponse.md
 docs/LlmCatalog.md
 docs/LlmCatalogModel.md
@@ -115,6 +115,7 @@ docs/ProviderConfig.md
 docs/ProviderPatch.md
 docs/ProviderSecretRequest.md
 docs/PutMaskResponse.md
+docs/ReadingOrder.md
 docs/Region.md
 docs/Scene.md
 docs/SceneSnapshot.md
@@ -142,10 +143,6 @@ src/models/app_config.rs
 src/models/app_event.rs
 src/models/app_event_one_of.rs
 src/models/app_event_one_of_1.rs
-src/models/app_event_one_of_10.rs
-src/models/app_event_one_of_11.rs
-src/models/app_event_one_of_12.rs
-src/models/app_event_one_of_13.rs
 src/models/app_event_one_of_2.rs
 src/models/app_event_one_of_3.rs
 src/models/app_event_one_of_4.rs
@@ -155,9 +152,11 @@ src/models/app_event_one_of_7.rs
 src/models/app_event_one_of_8.rs
 src/models/app_event_one_of_9.rs
 src/models/config_patch.rs
+src/models/create_pages_from_paths_request.rs
 src/models/create_pages_response.rs
 src/models/create_project_request.rs
 src/models/data_config.rs
+src/models/data_config_patch.rs
 src/models/download_progress.rs
 src/models/download_status.rs
 src/models/download_status_one_of.rs
@@ -166,7 +165,6 @@ src/models/download_status_one_of_2.rs
 src/models/download_status_one_of_3.rs
 src/models/engine_catalog.rs
 src/models/engine_catalog_entry.rs
-src/models/error_event.rs
 src/models/export_format.rs
 src/models/export_project_request.rs
 src/models/font_face_info.rs
@@ -184,6 +182,9 @@ src/models/image_role.rs
 src/models/job_finished_event.rs
 src/models/job_status.rs
 src/models/job_summary.rs
+src/models/job_warning_event.rs
+src/models/list_downloads_response.rs
+src/models/list_operations_response.rs
 src/models/list_projects_response.rs
 src/models/llm_catalog.rs
 src/models/llm_catalog_model.rs
@@ -250,6 +251,7 @@ src/models/provider_config.rs
 src/models/provider_patch.rs
 src/models/provider_secret_request.rs
 src/models/put_mask_response.rs
+src/models/reading_order.rs
 src/models/region.rs
 src/models/scene.rs
 src/models/scene_snapshot.rs

@@ -4,6 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**default_font** | Option<**String**> | Optional global font override (from UI preferences). | [optional]
 **format** | [**models::ExportFormat**](ExportFormat.md) |  | 
 **pages** | Option<**Vec<uuid::Uuid>**> | Optional subset of pages; defaults to every page. | [optional]
 

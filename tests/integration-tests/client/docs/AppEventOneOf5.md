@@ -4,10 +4,8 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**error** | Option<**String**> |  | [optional]
-**id** | **String** |  | 
-**status** | [**models::JobStatus**](JobStatus.md) |  | 
-**event** | **Event** |  (enum: jobFinished) | 
+**event** | **Event** |  (enum: llmLoading) | 
+**target** | [**models::LlmTarget**](LlmTarget.md) |  | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

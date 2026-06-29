@@ -4,6 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**bubble_segmenter** | Option<**String**> |  | [optional]
 **detector** | Option<**String**> |  | [optional]
 **font_detector** | Option<**String**> |  | [optional]
 **inpainter** | Option<**String**> |  | [optional]
