@@ -2,6 +2,7 @@
 
 import { getGetSceneJsonQueryKey } from '@/lib/api/default/default'
 import type { SceneSnapshot } from '@/lib/api/schemas'
+import { textNodesOf } from '@/hooks/useCurrentPage'
 import { openImageFiles, openImageFolder, openKhrFile } from '@/lib/io/openFiles'
 import { saveBlob } from '@/lib/io/saveBlob'
 import { exportProject, uploadKhrArchive, uploadPages, uploadPagesByPaths } from '@/lib/io/scene'
@@ -83,3 +84,86 @@ export async function exportCurrentProjectAs(
     throw err
   }
 }
+
+// ---------------------------------------------------------------------------
+// Text export (client-side: OCR + translation are already in scene state)
+// ---------------------------------------------------------------------------
+
+/**
+ * Build a `.txt` body for the given pages: each text block rendered as
+ * `[index] <OCR> → <translation>`, blocks joined by newlines, pages
+ * separated by a `— Страница N —` header. Empty blocks (no OCR and no
+ * translation) are skipped.
+ */
+function buildTextExport(pages: { name?: string; blocks: { ocr?: string; translation?: string }[] }[]): string {
+  const sections: string[] = []
+  const multiple = pages.length > 1
+  pages.forEach((page, pageIdx) => {
+    const lines: string[] = []
+    if (multiple) {
+      const title = (page.name ?? `Страница ${pageIdx + 1}`).trim()
+      lines.push(`— ${title} —`, '')
+    }
+    let blockNo = 0
+    for (const block of page.blocks) {
+      const ocr = (block.ocr ?? '').trim()
+      const translation = (block.translation ?? '').trim()
+      if (!ocr && !translation) continue
+      blockNo += 1
+      if (ocr && translation) lines.push(`[${blockNo}] ${ocr} → ${translation}`)
+      else if (translation) lines.push(`[${blockNo}] ${translation}`)
+      else lines.push(`[${blockNo}] ${ocr}`)
+    }
+    // Only include pages that actually have text; keep the page header order.
+    if (lines.some((l) => l.length > 0 && !l.startsWith('—'))) sections.push(lines.join('\n'))
+  })
+  return sections.join('\n\n')
+}
+
+/**
+ * Collect text blocks (OCR + translation) for a filtered set of pages,
+ * read straight from the cached scene snapshot.
+ */
+function collectPages(pageIds?: string[]): { name?: string; blocks: { ocr?: string; translation?: string }[] }[] {
+  const snap = queryClient.getQueryData<SceneSnapshot>(getGetSceneJsonQueryKey())
+  const pagesMap = snap?.scene?.pages
+  if (!pagesMap) return []
+  const wanted = pageIds ? new Set(pageIds) : null
+  return Object.values(pagesMap)
+    .filter((page) => !wanted || wanted.has(page.id))
+    .map((page) => {
+      const nodes = textNodesOf(page)
+      // Order by reading position (top-to-bottom, left-to-right) so the export
+      // follows the natural flow of the page.
+      nodes.sort((a, b) =>
+        a.transform.y === b.transform.y
+          ? a.transform.x - b.transform.x
+          : a.transform.y - b.transform.y,
+      )
+      return {
+        name: page.name,
+        blocks: nodes.map((n) => ({
+          ocr: n.data.text ?? undefined,
+          translation: n.data.translation ?? undefined,
+        })),
+      }
+    })
+}
+
+/**
+ * Export OCR text + translation to a `.txt` file. With no `pageIds`, exports
+ * every page of the current project; otherwise only the listed pages.
+ */
+export async function exportCurrentProjectAsText(pageIds?: string[]): Promise<void> {
+  try {
+    const pages = collectPages(pageIds)
+    const body = buildTextExport(pages)
+    const base = sanitiseBaseName(currentProjectName())
+    const suffix = pageIds && pageIds.length === 1 ? '-page' : ''
+    await saveBlob(new Blob([body], { type: 'text/plain;charset=utf-8' }), `${base}${suffix}.txt`)
+  } catch (err) {
+    console.error('Text export failed:', err)
+    throw err
+  }
+}
+

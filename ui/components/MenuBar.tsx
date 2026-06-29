@@ -23,7 +23,11 @@ import {
 import { useScene } from "@/hooks/useScene";
 import { getConfig, startPipeline } from "@/lib/api/default/default";
 import { isTauri, openExternalUrl } from "@/lib/backend";
-import { exportCurrentProjectAs, importPages } from "@/lib/io/pagesIo";
+import {
+  exportCurrentProjectAs,
+  exportCurrentProjectAsText,
+  importPages,
+} from "@/lib/io/pagesIo";
 import {
   closeProject,
   redoOp,
@@ -174,6 +178,18 @@ export function MenuBar() {
       onSelect: () => void exportCurrentProjectAs("rendered"),
       disabled: !hasScene,
       testId: "menu-file-export-all-rendered",
+    },
+    {
+      label: t("menu.exportText"),
+      onSelect: () => void exportCurrentProjectAsText([requirePageId()]),
+      disabled: !hasPage,
+      testId: "menu-file-export-text",
+    },
+    {
+      label: t("menu.exportAllText"),
+      onSelect: () => void exportCurrentProjectAsText(),
+      disabled: !hasScene,
+      testId: "menu-file-export-all-text",
     },
   ];
 

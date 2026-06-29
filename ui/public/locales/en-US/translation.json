@@ -29,6 +29,8 @@
     "exportPsd": "Export PSD...",
     "exportAllInpainted": "Export All Inpainted...",
     "exportAllRendered": "Export All Rendered...",
+    "exportText": "Export Text...",
+    "exportAllText": "Export All Text...",
     "view": "View",
     "fitWindow": "Fit Window",
     "originalSize": "Original Size",
