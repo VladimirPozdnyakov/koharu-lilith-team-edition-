@@ -4,7 +4,7 @@ title: Troubleshooting
 
 # Troubleshooting
 
-This page covers the most common Koharu problems in the current implementation: first-run downloads, runtime initialization, GPU fallback, headless and MCP access, pipeline-stage ordering, and source-build setup.
+This page covers the most common Koharu problems in the current implementation: first-run downloads, runtime initialization, GPU fallback, pipeline-stage ordering, and source-build setup.
 
 ## Before you start
 
@@ -14,7 +14,6 @@ When troubleshooting, first identify which layer is failing:
 - runtime or model downloads
 - GPU acceleration
 - page pipeline stages such as detect, OCR, inpaint, or render
-- headless or MCP connectivity
 - source build and local development
 
 That usually narrows the problem quickly.
@@ -98,7 +97,7 @@ If the driver is old or the CUDA check fails, Koharu deliberately prefers CPU ov
 
 Some errors are simply pipeline ordering problems.
 
-Common examples from the current API and MCP layer:
+Common examples from the current API layer:
 
 - `No segment mask available. Run detect first.`
 - `No rendered image found`
@@ -135,53 +134,6 @@ Try this:
 4. rerun later stages after the structural fixes
 
 If the structure is wrong, translation quality usually gets worse downstream because OCR and rendering both depend on block geometry.
-
-## Headless mode starts, but you cannot open the Web UI
-
-Check the basics first:
-
-- did you pass `--headless`
-- did you choose a fixed port
-- is the process still running
-
-Example:
-
-```bash
-koharu --port 4000 --headless
-```
-
-Then open:
-
-```text
-http://localhost:4000
-```
-
-Important implementation detail:
-
-- Koharu binds to `127.0.0.1`
-
-That means the local Web UI is only available on the same machine unless you expose it yourself through your own networking setup.
-
-Also verify that another process is not already using the selected port.
-
-## The MCP client cannot connect
-
-Use a fixed port and point the client to:
-
-```text
-http://localhost:9999/mcp
-```
-
-Common mistakes:
-
-- using the root URL instead of `/mcp`
-- forgetting `--port`
-- trying to connect after the Koharu process has already exited
-- trying to reach the service from another machine without explicitly exposing the port
-
-If normal headless Web UI access works but MCP does not, check the exact URL first. Wrong path selection is more common than server failure.
-
-If the client is Antigravity, Claude Desktop, or Claude Code, follow the client-specific setup in [Configure MCP Clients](configure-mcp-clients.md).
 
 ## Import appears to do nothing
 
@@ -259,7 +211,6 @@ You have probably isolated the issue enough to report it when:
 - `--cpu` works but GPU mode does not
 - `--download` consistently fails on a healthy network
 - the same page repeatedly triggers a reproducible pipeline failure
-- headless mode starts but a correct `localhost` URL still fails
 
 At that point, collect:
 
@@ -272,8 +223,6 @@ At that point, collect:
 ## Related pages
 
 - [Install Koharu](install-koharu.md)
-- [Run GUI, Headless, and MCP Modes](run-gui-headless-and-mcp.md)
-- [Configure MCP Clients](configure-mcp-clients.md)
 - [Build From Source](build-from-source.md)
 - [CLI Reference](../reference/cli.md)
 - [Technical Deep Dive](../explanation/technical-deep-dive.md)

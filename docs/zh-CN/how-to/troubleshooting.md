@@ -4,7 +4,7 @@ title: 故障排查
 
 # 故障排查
 
-本页覆盖当前实现下最常见的问题：首次启动下载、运行时初始化、GPU 回退、headless 与 MCP 访问、管线顺序以及源码构建问题。
+本页覆盖当前实现下最常见的问题：首次启动下载、运行时初始化、GPU 回退、管线顺序以及源码构建问题。
 
 ## 开始前
 
@@ -14,7 +14,6 @@ title: 故障排查
 - 运行时或模型下载
 - GPU 加速
 - Detect、OCR、Inpaint、Render 等页面管线阶段
-- Headless 或 MCP 连接
 - 本地源码构建
 
 这通常能很快缩小问题范围。
@@ -98,7 +97,7 @@ Koharu 首次使用时需要联网下载：
 
 有些报错其实只是管线顺序不对。
 
-当前 API 和 MCP 层里常见的例子有：
+当前 API 层里常见的例子有：
 
 - `No segment mask available. Run detect first.`
 - `No rendered image found`
@@ -135,53 +134,6 @@ Koharu 首次使用时需要联网下载：
 4. 结构修正后，重新跑后面的阶段
 
 如果结构一开始就错了，下游翻译和渲染通常都会一起变差，因为它们都依赖文本块几何信息。
-
-## Headless 模式启动了，但 Web UI 打不开
-
-先检查最基础的问题：
-
-- 是否传了 `--headless`
-- 是否选择了固定端口
-- 进程是否还在运行
-
-例如：
-
-```bash
-koharu --port 4000 --headless
-```
-
-然后打开：
-
-```text
-http://localhost:4000
-```
-
-重要实现细节：
-
-- Koharu 默认绑定到 `127.0.0.1`
-
-这意味着本地 Web UI 默认只能在同一台机器上访问，除非你自己把端口暴露出去。
-
-另外也要确认选中的端口没有被别的进程占用。
-
-## MCP 客户端连不上
-
-建议使用固定端口，并让客户端连接：
-
-```text
-http://localhost:9999/mcp
-```
-
-常见错误：
-
-- 用了根 URL，而不是 `/mcp`
-- 忘了加 `--port`
-- Koharu 进程已经退出
-- 想从另一台机器访问，却没有显式暴露端口
-
-如果普通 headless Web UI 可以打开，但 MCP 不行，先核对 URL 路径。相比服务器本身挂掉，路径写错更常见。
-
-如果你用的是 Antigravity、Claude Desktop 或 Claude Code，请直接参照 [配置 MCP 客户端](configure-mcp-clients.md)。
 
 ## 导入后看起来什么都没发生
 
@@ -259,7 +211,6 @@ bun cargo build --release -p koharu --features=cuda
 - `--cpu` 能跑，GPU 模式不能
 - 在网络正常情况下，`--download` 仍然稳定失败
 - 同一页总是触发可复现的管线失败
-- headless 模式已经启动，但正确的 `localhost` URL 仍然打不开
 
 此时最好收集：
 
@@ -272,8 +223,6 @@ bun cargo build --release -p koharu --features=cuda
 ## 相关页面
 
 - [安装 Koharu](install-koharu.md)
-- [以 GUI、Headless 与 MCP 模式运行](run-gui-headless-and-mcp.md)
-- [配置 MCP 客户端](configure-mcp-clients.md)
 - [从源码构建](build-from-source.md)
 - [CLI 参考](../reference/cli.md)
 - [技术深潜](../explanation/technical-deep-dive.md)

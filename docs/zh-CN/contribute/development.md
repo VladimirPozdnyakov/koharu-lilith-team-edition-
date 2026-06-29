@@ -128,5 +128,4 @@ zensical build -f docs/zensical.pt-BR.toml
 ## 相关页面
 
 - [从源码构建](../how-to/build-from-source.md)
-- [以 GUI、Headless 与 MCP 模式运行](../how-to/run-gui-headless-and-mcp.md)
 - [故障排查](../how-to/troubleshooting.md)

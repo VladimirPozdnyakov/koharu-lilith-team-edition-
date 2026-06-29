@@ -63,13 +63,11 @@ CUDA 対応環境では、必要なランタイム部品を手作業でライブ
 
 Koharu が正常に起動したら、次に考えることはたいてい以下です。
 
-- デスクトップ GUI を使うか、headless モードを使うか
 - ローカル翻訳モデルを使うか、リモートプロバイダを使うか
 - rendered export にするか、レイヤー付き PSD export にするか
 
 続けて読むページ:
 
-- [GUI / Headless / MCP モードを使う](run-gui-headless-and-mcp.md)
 - [モデルとプロバイダ](../explanation/models-and-providers.md)
 - [ページを書き出し、プロジェクトを管理する](export-and-manage-projects.md)
 - [トラブルシューティング](troubleshooting.md)

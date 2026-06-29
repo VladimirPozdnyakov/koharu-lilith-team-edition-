@@ -139,10 +139,6 @@ axum = { version = "0.8", features = ["multipart", "ws"] }
 async-stream = "0.3"
 rmp-serde = "1"
 rmpv = { version = "1", features = ["with-serde"] }
-rmcp = { version = "1.6", features = [
-    "server",
-    "transport-streamable-http-server",
-] }
 schemars = { version = "1.2", features = ["chrono04", "indexmap2", "uuid1"] }
 utoipa = { version = "5", features = ["axum_extras", "chrono", "indexmap", "uuid"] }
 utoipa-axum = "0.2"

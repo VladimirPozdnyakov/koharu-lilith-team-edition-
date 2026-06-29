@@ -40,7 +40,6 @@ Under the hood, Koharu uses [candle](https://github.com/huggingface/candle) and 
 - Translation with local or remote LLM backends
 - Advanced text rendering with vertical CJK and RTL support
 - Layered PSD export with editable text
-- Local HTTP API and MCP server for automation
 
 For installation and first-run guidance, see [Install Koharu](https://koharu.rs/how-to/install-koharu/) and [Translate Your First Page](https://koharu.rs/tutorials/translate-your-first-page/).
 
@@ -75,36 +74,6 @@ For the full list and customization details, see [Keyboard Shortcuts](https://ko
 Koharu can export the current page either as a flattened rendered image or as a layered Photoshop PSD. PSD export preserves helper layers and writes translated text as editable text layers, which is useful for downstream cleanup and manual refinement.
 
 For export behavior, PSD contents, and file naming, see [Export Pages and Manage Projects](https://koharu.rs/how-to/export-and-manage-projects/).
-
-### MCP Server
-
-Koharu includes a built-in MCP server for local agent integrations. By default it listens on a random local port, but you can pin it with `--port`.
-
-```bash
-# macOS / Linux
-koharu --port 9999
-# Windows
-koharu.exe --port 9999
-```
-
-Then point your client at `http://localhost:9999/mcp`.
-
-For local setup and the available tools, see [Run GUI, Headless, and MCP Modes](https://koharu.rs/how-to/run-gui-headless-and-mcp/), [Configure MCP Clients](https://koharu.rs/how-to/configure-mcp-clients/), and [MCP Tools Reference](https://koharu.rs/reference/mcp-tools/).
-
-### Headless Mode
-
-Koharu can run without launching the desktop window.
-
-```bash
-# macOS / Linux
-koharu --port 4000 --headless
-# Windows
-koharu.exe --port 4000 --headless
-```
-
-You can then connect to the web client at `http://localhost:4000`.
-
-For runtime modes, ports, and local endpoints, see [Run GUI, Headless, and MCP Modes](https://koharu.rs/how-to/run-gui-headless-and-mcp/).
 
 ### Runtime Configuration
 
@@ -304,20 +273,6 @@ On macOS, you can install Koharu with [Homebrew](https://brew.sh/):
 
 ```bash
 brew install --cask koharu
-```
-
-### Docker
-
-Koharu also publishes official Docker images for headless use. You can pull the latest image from GitHub Container Registry:
-
-```bash
-docker pull ghcr.io/mayocream/koharu:latest
-```
-
-Then run the container with the desired port mapping:
-
-```bash
-docker run -p 4000:4000 --gpus all ghcr.io/mayocream/koharu:latest
 ```
 
 ## Troubleshooting

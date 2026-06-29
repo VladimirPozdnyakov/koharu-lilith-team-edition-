@@ -1,7 +1,7 @@
 ---
 title: Visão geral
 social_title: Koharu
-description: Koharu é um tradutor de mangá local-first feito em Rust, com OCR, inpainting, suporte a LLMs locais e remotas, Web UI e automação via MCP.
+description: Koharu é um tradutor de mangá local-first feito em Rust, com OCR, inpainting, suporte a LLMs locais e remotas e uma Web UI.
 hide:
   - navigation
   - toc
@@ -507,81 +507,6 @@ hide:
     </div>
   </section>
 
-  <section class="kh-section">
-    <div class="kh-shell">
-      <div class="kh-section__header">
-        <div class="kh-kicker">Execução sem GUI</div>
-        <h2>Rode o Koharu sem a janela do desktop quando você precisar de uma Web UI local ou de um runtime de tradução scriptável.</h2>
-        <p>
-          O app desktop é a interface principal, mas o mesmo runtime também pode rodar
-          headless. Use-o para acesso via navegador, trabalho em lote reprodutível ou
-          automação local que ainda dependa do pipeline por página do Koharu.
-        </p>
-      </div>
-
-      <div class="kh-command-grid">
-        <div class="kh-command-card">
-          <div class="kh-command-card__title">Modo headless</div>
-          <div class="kh-command-card__copy">
-            Inicie o Koharu sem a janela do desktop e mantenha o mesmo runtime de
-            tradução disponível por meio de uma sessão de navegador em uma porta local fixa.
-          </div>
-          <pre><code># macOS / Linux
-koharu --port 4000 --headless
-
-# Windows
-koharu.exe --port 4000 --headless</code></pre>
-        </div>
-        <div class="kh-command-card">
-          <div class="kh-command-card__title">Para que serve o modo headless</div>
-          <div class="kh-command-card__copy">
-            Use quando você precisar do fluxo do desktop em um formato mais fácil de
-            scriptar, agendar ou expor a outras ferramentas locais.
-          </div>
-          <div class="kh-chip-list">
-            <span class="kh-chip">Web UI local</span>
-            <span class="kh-chip">Jobs em lote</span>
-            <span class="kh-chip">Scripts</span>
-            <span class="kh-chip">Host de desktop remoto</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="kh-section">
-    <div class="kh-shell">
-      <div class="kh-section__header">
-        <div class="kh-kicker">Integração com MCP</div>
-        <h2>Deixe agentes operarem o Koharu enquanto os modelos e os dados das páginas permanecem na máquina local.</h2>
-        <p>
-          O Koharu tem suporte a MCP, então a UI desktop, o modo headless e fluxos de
-          trabalho com agentes conversam com o mesmo runtime local de tradução, sem
-          se dividirem em stacks separadas.
-        </p>
-      </div>
-
-      <div class="kh-mcp-grid">
-        <div class="kh-mcp-card">
-          <h3>Um runtime, vários pontos de entrada</h3>
-          <p>
-            O mesmo pipeline de páginas alimenta a UI desktop, a Web UI headless e as
-            ferramentas MCP, então a automação permanece alinhada com as sessões
-            normais de edição.
-          </p>
-        </div>
-        <div class="kh-mcp-card">
-          <h3>Tarefas de tradução amigáveis a agentes</h3>
-          <p>
-            Use agentes para tradução em lote, ciclos de revisão, exportações e
-            ferramentas auxiliares que precisem de acesso a OCR, limpeza, tradução e
-            saídas em nível de página.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <section class="kh-dev">
     <div class="kh-shell">
       <div class="kh-dev__lead">
@@ -590,8 +515,7 @@ koharu.exe --port 4000 --headless</code></pre>
         <h2>Compile a partir do código-fonte e reutilize o mesmo runtime nas suas próprias ferramentas.</h2>
         <p>
           O Koharu foi pensado para ser prático de compilar e prático de integrar. Use
-          Bun e Rust para builds locais, flags estáveis de runtime para deploy e o
-          modo headless ou MCP quando você precisar de automação em volta do app.
+          Bun e Rust para builds locais e flags estáveis de runtime para deploy.
         </p>
       </div>
 
@@ -610,27 +534,11 @@ bun run build</code></pre>
             <div class="kh-resource-card__eyebrow">Flags de runtime</div>
             <div class="kh-resource-card__copy">
               O binário do desktop expõe um pequeno conjunto de flags de runtime para
-              deploy local e automação, sem introduzir um backend separado.
+              deploy local, sem introduzir um backend separado.
             </div>
             <div class="kh-chip-list">
-              <span class="kh-chip">--headless</span>
-              <span class="kh-chip">--port</span>
               <span class="kh-chip">--download</span>
               <span class="kh-chip">--cpu</span>
-            </div>
-          </div>
-          <div class="kh-resource-card">
-            <div class="kh-resource-card__eyebrow">Automação</div>
-            <div class="kh-resource-card__copy">
-              Reutilize o mesmo pipeline de páginas em modo headless ou via MCP quando
-              o Koharu precisar participar de fluxos locais maiores.
-            </div>
-            <div class="kh-chip-list">
-              <span class="kh-chip">App desktop</span>
-              <span class="kh-chip">Modo headless</span>
-              <span class="kh-chip">Web UI local</span>
-              <span class="kh-chip">Fluxos com agentes MCP</span>
-              <span class="kh-chip">Integrações locais</span>
             </div>
           </div>
         </div>

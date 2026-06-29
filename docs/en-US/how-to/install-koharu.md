@@ -63,13 +63,11 @@ On CUDA-capable systems, Koharu bundles and initializes the runtime pieces it ne
 
 Once Koharu launches successfully, the next decisions are usually:
 
-- desktop GUI vs headless mode
 - local translation model vs remote provider
 - rendered export vs layered PSD export
 
 See:
 
-- [Run GUI, Headless, and MCP Modes](run-gui-headless-and-mcp.md)
 - [Models and Providers](../explanation/models-and-providers.md)
 - [Export Pages and Manage Projects](export-and-manage-projects.md)
 - [Troubleshooting](troubleshooting.md)

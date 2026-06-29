@@ -128,5 +128,4 @@ Small, focused PRs get reviewed faster than large, mixed ones.
 ## Related Pages
 
 - [Build From Source](../how-to/build-from-source.md)
-- [Run GUI, Headless, and MCP Modes](../how-to/run-gui-headless-and-mcp.md)
 - [Troubleshooting](../how-to/troubleshooting.md)

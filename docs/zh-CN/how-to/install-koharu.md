@@ -63,13 +63,11 @@ Koharu 支持：
 
 Koharu 成功启动后，通常接下来要决定的是：
 
-- 使用桌面 GUI 还是 headless 模式
 - 使用本地翻译模型还是远程提供商
 - 导出渲染图还是分层 PSD
 
 参见：
 
-- [以 GUI、Headless 与 MCP 模式运行](run-gui-headless-and-mcp.md)
 - [模型与提供商](../explanation/models-and-providers.md)
 - [导出页面与管理项目](export-and-manage-projects.md)
 - [故障排查](troubleshooting.md)

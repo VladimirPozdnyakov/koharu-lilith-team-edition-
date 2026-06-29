@@ -1,7 +1,7 @@
 ---
 title: 概要
 social_title: Koharu
-description: Koharu は Rust 製の local-first な漫画翻訳ツールです。OCR、inpainting、ローカル / リモート LLM、Web UI、MCP 自動化に対応しています。
+description: Koharu は Rust 製の local-first な漫画翻訳ツールです。OCR、inpainting、ローカル / リモート LLM、Web UI に対応しています。
 hide:
   - navigation
   - toc
@@ -507,76 +507,6 @@ hide:
     </div>
   </section>
 
-  <section class="kh-section">
-    <div class="kh-shell">
-      <div class="kh-section__header">
-        <div class="kh-kicker">GUI なしの運用</div>
-        <h2>ローカル Web UI やスクリプト化したページ処理が必要なときは、デスクトップウィンドウなしで Koharu を動かせます。</h2>
-        <p>
-          デスクトップアプリが主な利用形態ですが、同じランタイムを headless でも動かせます。
-          別マシンからのブラウザアクセス、繰り返し実行するバッチ翻訳、
-          あるいは Koharu のページ単位パイプラインをそのまま使うローカル自動化に向いています。
-        </p>
-      </div>
-
-      <div class="kh-command-grid">
-        <div class="kh-command-card">
-          <div class="kh-command-card__title">Headless モード</div>
-          <div class="kh-command-card__copy">
-            デスクトップウィンドウを開かずに Koharu を起動し、同じ翻訳ランタイムを固定ローカルポート上のブラウザセッションから使えます。
-          </div>
-          <pre><code># macOS / Linux
-koharu --port 4000 --headless
-
-# Windows
-koharu.exe --port 4000 --headless</code></pre>
-        </div>
-        <div class="kh-command-card">
-          <div class="kh-command-card__title">Headless の用途</div>
-          <div class="kh-command-card__copy">
-            既存のデスクトップワークフローを、スクリプト化、スケジュール実行、他のローカルツールへの公開に向いた形で使いたいときに向いています。
-          </div>
-          <div class="kh-chip-list">
-            <span class="kh-chip">ローカル Web UI</span>
-            <span class="kh-chip">バッチ処理</span>
-            <span class="kh-chip">スクリプト</span>
-            <span class="kh-chip">リモートデスクトップ環境</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="kh-section">
-    <div class="kh-shell">
-      <div class="kh-section__header">
-        <div class="kh-kicker">MCP 連携</div>
-        <h2>モデルとページデータをローカルに置いたまま、エージェントから Koharu を操作できます。</h2>
-        <p>
-          Koharu には MCP サポートがあるため、デスクトップ編集、headless モード、エージェントワークフローのすべてが、
-          別々のスタックに分かれず同じローカル翻訳ランタイムを共有できます。
-        </p>
-      </div>
-
-      <div class="kh-mcp-grid">
-        <div class="kh-mcp-card">
-          <h3>1 つのランタイム、複数の入口</h3>
-          <p>
-            同じページパイプラインをデスクトップ UI、headless Web UI、MCP ツールで共有できるため、
-            自動化だけが通常の編集セッションと別挙動になるのを防げます。
-          </p>
-        </div>
-        <div class="kh-mcp-card">
-          <h3>エージェント向けの翻訳タスク</h3>
-          <p>
-            OCR、クリーンアップ、翻訳、ページ単位の出力にアクセスする補助ツールや、
-            バッチ翻訳、レビュー反復、export 作業をエージェントに任せられます。
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <section class="kh-dev">
     <div class="kh-shell">
       <div class="kh-dev__lead">
@@ -585,7 +515,7 @@ koharu.exe --port 4000 --headless</code></pre>
         <h2>ローカルでビルドし、同じデスクトップランタイムを自分のツールに組み込めます。</h2>
         <p>
           Koharu は開発もしやすく、組み込みにも向いています。Bun と Rust でソースビルドし、
-          安定したランタイムフラグを使い、必要に応じて headless モードや MCP をローカル自動化に再利用できます。
+          ローカル配備向けの安定したランタイムフラグを使えます。
         </p>
       </div>
 
@@ -602,27 +532,11 @@ bun run build</code></pre>
           <div class="kh-resource-card">
             <div class="kh-resource-card__eyebrow">ランタイムフラグ</div>
             <div class="kh-resource-card__copy">
-              デスクトップバイナリには、別のバックエンドサービスを増やさずにローカル配備や自動化へ使える実用的なフラグがあります。
+              デスクトップバイナリには、別のバックエンドサービスを増やさずにローカル配備へ使える実用的なフラグがあります。
             </div>
             <div class="kh-chip-list">
-              <span class="kh-chip">--headless</span>
-              <span class="kh-chip">--port</span>
               <span class="kh-chip">--download</span>
               <span class="kh-chip">--cpu</span>
-            </div>
-          </div>
-          <div class="kh-resource-card">
-            <div class="kh-resource-card__eyebrow">自動化</div>
-            <div class="kh-resource-card__copy">
-              Koharu をより大きなローカルワークフローに組み込みたいときは、
-              同じページパイプラインを headless モードや MCP 経由で再利用できます。
-            </div>
-            <div class="kh-chip-list">
-              <span class="kh-chip">デスクトップアプリ</span>
-              <span class="kh-chip">Headless mode</span>
-              <span class="kh-chip">ローカル Web UI</span>
-              <span class="kh-chip">MCP エージェント連携</span>
-              <span class="kh-chip">ローカル統合</span>
             </div>
           </div>
         </div>

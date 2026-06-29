@@ -46,7 +46,7 @@ pub async fn run() -> Result<()> {
     #[cfg(target_os = "windows")]
     {
         let attached = crate::windows::attach_parent_console();
-        if !attached && (cli.headless || cli.debug) {
+        if !attached && cli.debug {
             crate::windows::create_console_window();
         }
         crate::windows::enable_ansi_support().ok();
@@ -91,9 +91,12 @@ pub async fn run() -> Result<()> {
     #[cfg(target_os = "windows")]
     crate::windows::register_khr().ok();
 
-    let bind_host = cli.host.as_deref().unwrap_or("127.0.0.1");
-    let bind_port = cli.port.unwrap_or(4000);
-    let listener: TcpListener = if cfg!(debug_assertions) || cli.port.is_some() {
+    // Always bind loopback: this is a desktop app, the HTTP server exists only
+    // to serve the embedded webview. (Public-network serving via --host was
+    // removed along with the headless mode.)
+    let bind_host = "127.0.0.1";
+    let bind_port = 4000;
+    let listener: TcpListener = if cfg!(debug_assertions) {
         TcpListener::bind((bind_host, bind_port)).await?
     } else {
         let mut port = bind_port;
@@ -118,13 +121,6 @@ pub async fn run() -> Result<()> {
             .await
             .expect("failed to start server");
     });
-
-    if cli.headless {
-        tracing::info!(port, "headless: open http://127.0.0.1:{port}/ in a browser");
-        bootstrap_app(state, config, cli.cpu).await?;
-        tokio::signal::ctrl_c().await?;
-        return Ok(());
-    }
 
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())

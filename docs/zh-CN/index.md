@@ -507,75 +507,6 @@ hide:
     </div>
   </section>
 
-  <section class="kh-section">
-    <div class="kh-shell">
-      <div class="kh-section__header">
-        <div class="kh-kicker">无界面部署</div>
-        <h2>当你需要本地 Web UI 或可脚本化的页面流水线时，无需打开桌面窗口也能运行 Koharu。</h2>
-        <p>
-          桌面应用是主要使用方式，但同一套运行时也可以无界面运行。它适合在另一台机器上通过浏览器访问、
-          执行可重复的批量翻译，或搭建仍然依赖 Koharu 页面感知流水线的本地自动化。
-        </p>
-      </div>
-
-      <div class="kh-command-grid">
-        <div class="kh-command-card">
-          <div class="kh-command-card__title">Headless 模式</div>
-          <div class="kh-command-card__copy">
-            启动 Koharu 时不打开桌面窗口，并在固定本地端口上通过浏览器会话继续使用同一套翻译运行时。
-          </div>
-          <pre><code># macOS / Linux
-koharu --port 4000 --headless
-
-# Windows
-koharu.exe --port 4000 --headless</code></pre>
-        </div>
-        <div class="kh-command-card">
-          <div class="kh-command-card__title">Headless 适用场景</div>
-          <div class="kh-command-card__copy">
-            当你需要把现有桌面工作流换成更容易脚本化、调度或暴露给其他本地工具的形式时，就适合使用它。
-          </div>
-          <div class="kh-chip-list">
-            <span class="kh-chip">本地 Web UI</span>
-            <span class="kh-chip">批处理任务</span>
-            <span class="kh-chip">脚本</span>
-            <span class="kh-chip">远程桌面主机</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="kh-section">
-    <div class="kh-shell">
-      <div class="kh-section__header">
-        <div class="kh-kicker">MCP 集成</div>
-        <h2>让代理驱动 Koharu，同时把模型和页面数据保留在本地。</h2>
-        <p>
-          Koharu 内置 MCP 支持，因此桌面编辑、Headless 模式和代理工作流都可以接入同一套本地翻译运行时，
-          而不是拆成几套彼此割裂的系统。
-        </p>
-      </div>
-
-      <div class="kh-mcp-grid">
-        <div class="kh-mcp-card">
-          <h3>一套运行时，多个入口</h3>
-          <p>
-            同一套页面流水线既可以服务桌面 UI，也可以服务 Headless Web UI 和 MCP 工具，
-            因此自动化流程不会偏离 Koharu 在正常编辑会话中的实际行为。
-          </p>
-        </div>
-        <div class="kh-mcp-card">
-          <h3>适合代理的翻译任务</h3>
-          <p>
-            你可以用代理处理批量翻译、校对循环、导出以及辅助工具，只要它们需要访问 OCR、清理、
-            翻译和页面级输出即可。
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <section class="kh-dev">
     <div class="kh-shell">
       <div class="kh-dev__lead">
@@ -583,8 +514,7 @@ koharu.exe --port 4000 --headless</code></pre>
         <div class="kh-kicker">对开发者友好</div>
         <h2>在本地构建，并把同一套桌面运行时接入你自己的工具链。</h2>
         <p>
-          Koharu 易于开发，也易于集成：使用 Bun 和 Rust 从源码构建，复用稳定的运行时参数，
-          并在需要本地自动化时直接接入 Headless 模式或 MCP。
+          Koharu 易于开发，也易于集成：使用 Bun 和 Rust 从源码构建，复用稳定的运行时参数用于本地部署。
         </p>
       </div>
 
@@ -601,26 +531,11 @@ bun run build</code></pre>
           <div class="kh-resource-card">
             <div class="kh-resource-card__eyebrow">运行参数</div>
             <div class="kh-resource-card__copy">
-              桌面二进制提供一小组对本地部署和自动化很实用的参数，无需再单独搭建一个后端服务。
+              桌面二进制提供一小组对本地部署很实用的参数，无需再单独搭建一个后端服务。
             </div>
             <div class="kh-chip-list">
-              <span class="kh-chip">--headless</span>
-              <span class="kh-chip">--port</span>
               <span class="kh-chip">--download</span>
               <span class="kh-chip">--cpu</span>
-            </div>
-          </div>
-          <div class="kh-resource-card">
-            <div class="kh-resource-card__eyebrow">自动化</div>
-            <div class="kh-resource-card__copy">
-              当 Koharu 需要参与更大的本地工作流时，可以在 Headless 模式或通过 MCP 复用同一套页面流水线。
-            </div>
-            <div class="kh-chip-list">
-              <span class="kh-chip">桌面应用</span>
-              <span class="kh-chip">Headless 模式</span>
-              <span class="kh-chip">本地 Web UI</span>
-              <span class="kh-chip">MCP 代理工作流</span>
-              <span class="kh-chip">本地集成</span>
             </div>
           </div>
         </div>

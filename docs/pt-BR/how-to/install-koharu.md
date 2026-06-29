@@ -63,13 +63,11 @@ Em sistemas com CUDA, o Koharu empacota e inicializa as peças de runtime de que
 
 Depois que o Koharu abrir com sucesso, as próximas decisões geralmente são:
 
-- GUI desktop vs modo headless
 - modelo local de tradução vs provider remoto
 - exportação renderizada vs exportação em PSD com camadas
 
 Veja:
 
-- [Executar nos Modos GUI, Headless e MCP](run-gui-headless-and-mcp.md)
 - [Modelos e Providers](../explanation/models-and-providers.md)
 - [Exportar Páginas e Gerenciar Projetos](export-and-manage-projects.md)
 - [Troubleshooting](troubleshooting.md)
