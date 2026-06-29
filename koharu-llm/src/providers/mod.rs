@@ -16,15 +16,12 @@ pub(crate) fn resolve_system_prompt(custom: Option<&str>, target_language: Langu
     }
 }
 
-pub mod caiyun;
 mod chat_completions;
 pub mod claude;
-pub mod deepl;
 pub mod deepseek;
-pub mod gemini;
 pub mod google_translate;
-pub mod openai;
 pub mod openai_compatible;
+pub mod yandex;
 
 #[derive(Debug, Clone, Copy)]
 pub struct ProviderModelDescriptor {
@@ -118,176 +115,6 @@ pub struct ProviderConfig {
     pub max_tokens: Option<u32>,
 }
 
-const OPENAI_MODELS: &[ProviderModelDescriptor] = &[
-    ProviderModelDescriptor {
-        id: "gpt-5.5",
-        name: "GPT-5.5",
-    },
-    ProviderModelDescriptor {
-        id: "gpt-5.4",
-        name: "GPT-5.4",
-    },
-    ProviderModelDescriptor {
-        id: "gpt-5.4-mini",
-        name: "GPT-5.4 mini",
-    },
-    ProviderModelDescriptor {
-        id: "gpt-5.4-nano",
-        name: "GPT-5.4 nano",
-    },
-    ProviderModelDescriptor {
-        id: "gpt-5.2",
-        name: "GPT-5.2",
-    },
-    ProviderModelDescriptor {
-        id: "gpt-5.1",
-        name: "GPT-5.1",
-    },
-    ProviderModelDescriptor {
-        id: "gpt-5",
-        name: "GPT-5",
-    },
-    ProviderModelDescriptor {
-        id: "gpt-5-mini",
-        name: "GPT-5 mini",
-    },
-    ProviderModelDescriptor {
-        id: "gpt-5-nano",
-        name: "GPT-5 nano",
-    },
-    ProviderModelDescriptor {
-        id: "gpt-5-chat-latest",
-        name: "GPT-5 Chat latest",
-    },
-    ProviderModelDescriptor {
-        id: "gpt-4.1",
-        name: "GPT-4.1",
-    },
-    ProviderModelDescriptor {
-        id: "gpt-4.1-mini",
-        name: "GPT-4.1 mini",
-    },
-    ProviderModelDescriptor {
-        id: "gpt-4.1-nano",
-        name: "GPT-4.1 nano",
-    },
-    ProviderModelDescriptor {
-        id: "o3",
-        name: "o3",
-    },
-    ProviderModelDescriptor {
-        id: "o4-mini",
-        name: "o4-mini",
-    },
-    ProviderModelDescriptor {
-        id: "o3-mini",
-        name: "o3-mini",
-    },
-    ProviderModelDescriptor {
-        id: "o1",
-        name: "o1",
-    },
-    ProviderModelDescriptor {
-        id: "o1-mini",
-        name: "o1-mini",
-    },
-    ProviderModelDescriptor {
-        id: "o1-preview",
-        name: "o1 preview",
-    },
-    ProviderModelDescriptor {
-        id: "gpt-4o",
-        name: "GPT-4o",
-    },
-    ProviderModelDescriptor {
-        id: "gpt-4o-mini",
-        name: "GPT-4o mini",
-    },
-    ProviderModelDescriptor {
-        id: "gpt-4-turbo",
-        name: "GPT-4 Turbo",
-    },
-    ProviderModelDescriptor {
-        id: "gpt-4",
-        name: "GPT-4",
-    },
-    ProviderModelDescriptor {
-        id: "gpt-3.5-turbo",
-        name: "GPT-3.5 Turbo",
-    },
-];
-
-const GEMINI_MODELS: &[ProviderModelDescriptor] = &[
-    ProviderModelDescriptor {
-        id: "gemini-flash-lite-latest",
-        name: "Gemini Flash-Lite Latest",
-    },
-    ProviderModelDescriptor {
-        id: "gemini-flash-latest",
-        name: "Gemini Flash Latest",
-    },
-    ProviderModelDescriptor {
-        id: "gemini-pro-latest",
-        name: "Gemini Pro Latest",
-    },
-    ProviderModelDescriptor {
-        id: "gemini-3.5-flash",
-        name: "Gemini 3.5 Flash",
-    },
-    ProviderModelDescriptor {
-        id: "gemini-3.1-pro-preview",
-        name: "Gemini 3.1 Pro Preview",
-    },
-    ProviderModelDescriptor {
-        id: "gemini-3.1-pro-preview-customtools",
-        name: "Gemini 3.1 Pro Preview Custom Tools",
-    },
-    ProviderModelDescriptor {
-        id: "gemini-3.1-flash-lite",
-        name: "Gemini 3.1 Flash-Lite",
-    },
-    ProviderModelDescriptor {
-        id: "gemini-3-flash-preview",
-        name: "Gemini 3 Flash Preview",
-    },
-    ProviderModelDescriptor {
-        id: "gemini-2.5-pro",
-        name: "Gemini 2.5 Pro",
-    },
-    ProviderModelDescriptor {
-        id: "gemini-2.5-flash",
-        name: "Gemini 2.5 Flash",
-    },
-    ProviderModelDescriptor {
-        id: "gemini-2.5-flash-lite",
-        name: "Gemini 2.5 Flash-Lite",
-    },
-    ProviderModelDescriptor {
-        id: "gemini-2.0-flash",
-        name: "Gemini 2.0 Flash",
-    },
-    ProviderModelDescriptor {
-        id: "gemini-2.0-flash-001",
-        name: "Gemini 2.0 Flash 001",
-    },
-    ProviderModelDescriptor {
-        id: "gemini-2.0-flash-lite",
-        name: "Gemini 2.0 Flash-Lite",
-    },
-    ProviderModelDescriptor {
-        id: "gemini-2.0-flash-lite-001",
-        name: "Gemini 2.0 Flash-Lite 001",
-    },
-    ProviderModelDescriptor {
-        id: "gemma-4-31b-it",
-        name: "Gemma 4 31B",
-    },
-    ProviderModelDescriptor {
-        id: "gemma-4-26b-a4b-it",
-        name: "Gemma 4 26B",
-    },
-];
-
 const CLAUDE_MODELS: &[ProviderModelDescriptor] = &[
     ProviderModelDescriptor {
         id: "claude-opus-4-7",
@@ -357,24 +184,6 @@ const MT_MODELS: &[ProviderModelDescriptor] = &[ProviderModelDescriptor {
 
 const PROVIDERS: &[ProviderDescriptor] = &[
     ProviderDescriptor {
-        id: "openai",
-        name: "OpenAI",
-        requires_api_key: true,
-        requires_base_url: false,
-        supported_languages: ProviderSupportedLanguages::All,
-        models: ProviderCatalogModels::Static(OPENAI_MODELS),
-        build: build_openai_provider,
-    },
-    ProviderDescriptor {
-        id: "gemini",
-        name: "Gemini",
-        requires_api_key: true,
-        requires_base_url: false,
-        supported_languages: ProviderSupportedLanguages::All,
-        models: ProviderCatalogModels::Static(GEMINI_MODELS),
-        build: build_gemini_provider,
-    },
-    ProviderDescriptor {
         id: "claude",
         name: "Claude",
         requires_api_key: true,
@@ -393,15 +202,6 @@ const PROVIDERS: &[ProviderDescriptor] = &[
         build: build_deepseek_provider,
     },
     ProviderDescriptor {
-        id: "deepl",
-        name: "DeepL",
-        requires_api_key: true,
-        requires_base_url: false,
-        supported_languages: ProviderSupportedLanguages::All,
-        models: ProviderCatalogModels::Static(MT_MODELS),
-        build: build_deepl_mt_provider,
-    },
-    ProviderDescriptor {
         id: "google-translate",
         name: "Google Cloud Translation",
         requires_api_key: true,
@@ -411,15 +211,13 @@ const PROVIDERS: &[ProviderDescriptor] = &[
         build: build_google_translate_mt_provider,
     },
     ProviderDescriptor {
-        id: "caiyun",
-        name: "Caiyun",
+        id: "yandex",
+        name: "Yandex Translate",
         requires_api_key: true,
         requires_base_url: false,
-        supported_languages: ProviderSupportedLanguages::Limited(
-            caiyun::SUPPORTED_TARGET_LANGUAGES,
-        ),
+        supported_languages: ProviderSupportedLanguages::All,
         models: ProviderCatalogModels::Static(MT_MODELS),
-        build: build_caiyun_mt_provider,
+        build: build_yandex_mt_provider,
     },
     ProviderDescriptor {
         id: "openai-compatible",
@@ -511,20 +309,6 @@ fn required_base_url(config: &ProviderConfig, provider_id: &str) -> anyhow::Resu
         .ok_or_else(|| anyhow::anyhow!("base_url is required for {provider_id}"))
 }
 
-fn build_openai_provider(config: ProviderConfig) -> anyhow::Result<Box<dyn AnyProvider>> {
-    Ok(Box::new(openai::OpenAiProvider {
-        http_client: Arc::clone(&config.http_client),
-        api_key: required_api_key(&config, "openai")?,
-    }))
-}
-
-fn build_gemini_provider(config: ProviderConfig) -> anyhow::Result<Box<dyn AnyProvider>> {
-    Ok(Box::new(gemini::GeminiProvider {
-        http_client: Arc::clone(&config.http_client),
-        api_key: required_api_key(&config, "gemini")?,
-    }))
-}
-
 fn build_claude_provider(config: ProviderConfig) -> anyhow::Result<Box<dyn AnyProvider>> {
     Ok(Box::new(claude::ClaudeProvider {
         http_client: Arc::clone(&config.http_client),
@@ -551,14 +335,6 @@ fn build_openai_compatible_provider(
     }))
 }
 
-fn build_deepl_mt_provider(config: ProviderConfig) -> anyhow::Result<Box<dyn AnyProvider>> {
-    Ok(Box::new(deepl::DeeplMtProvider {
-        http_client: Arc::clone(&config.http_client),
-        api_key: required_api_key(&config, "deepl")?,
-        base_url: config.base_url,
-    }))
-}
-
 fn build_google_translate_mt_provider(
     config: ProviderConfig,
 ) -> anyhow::Result<Box<dyn AnyProvider>> {
@@ -568,10 +344,10 @@ fn build_google_translate_mt_provider(
     }))
 }
 
-fn build_caiyun_mt_provider(config: ProviderConfig) -> anyhow::Result<Box<dyn AnyProvider>> {
-    Ok(Box::new(caiyun::CaiyunMtProvider {
+fn build_yandex_mt_provider(config: ProviderConfig) -> anyhow::Result<Box<dyn AnyProvider>> {
+    Ok(Box::new(yandex::YandexMtProvider {
         http_client: Arc::clone(&config.http_client),
-        api_key: required_api_key(&config, "caiyun")?,
+        api_key: required_api_key(&config, "yandex")?,
     }))
 }
 
@@ -614,28 +390,6 @@ mod tests {
 
     #[test]
     fn static_llm_provider_catalogs_cover_current_model_families() {
-        assert_contains_all(
-            "openai",
-            OPENAI_MODELS,
-            &[
-                "gpt-5.5",
-                "gpt-5.4-mini",
-                "gpt-5-mini",
-                "gpt-4.1",
-                "gpt-4o",
-                "o3",
-            ],
-        );
-        assert_contains_all(
-            "gemini",
-            GEMINI_MODELS,
-            &[
-                "gemini-3.1-pro-preview",
-                "gemini-3.1-flash-lite",
-                "gemini-3.5-flash",
-                "gemma-4-26b-a4b-it",
-            ],
-        );
         assert_contains_all(
             "claude",
             CLAUDE_MODELS,

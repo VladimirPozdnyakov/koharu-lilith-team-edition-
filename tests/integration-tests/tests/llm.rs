@@ -43,8 +43,8 @@ async fn load_with_provider_requiring_missing_secret_errors() -> anyhow::Result<
         models::LlmLoadRequest {
             target: Box::new(models::LlmTarget {
                 kind: models::LlmTargetKind::Provider,
-                model_id: "gpt-5-mini".into(),
-                provider_id: Some(Some("openai".into())),
+                model_id: "deepseek-chat".into(),
+                provider_id: Some(Some("deepseek".into())),
             }),
             options: None,
         },

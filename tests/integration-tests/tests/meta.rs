@@ -116,7 +116,7 @@ async fn provider_secret_set_and_clear() -> anyhow::Result<()> {
     let app = TestApp::spawn().await?;
     api::set_provider_secret(
         &app.client_config,
-        "openai",
+        "deepseek",
         models::ProviderSecretRequest {
             secret: "sk-test".into(),
         },
@@ -125,19 +125,19 @@ async fn provider_secret_set_and_clear() -> anyhow::Result<()> {
     // Config now lists provider; api_key is redacted in the response.
     let cfg = api::get_config(&app.client_config).await?;
     let providers = cfg.providers.expect("providers list");
-    let openai = providers
+    let provider = providers
         .iter()
-        .find(|p| p.id == "openai")
+        .find(|p| p.id == "deepseek")
         .expect("provider should be registered");
-    assert!(openai.api_key.clone().flatten().is_some());
+    assert!(provider.api_key.clone().flatten().is_some());
 
-    api::clear_provider_secret(&app.client_config, "openai").await?;
+    api::clear_provider_secret(&app.client_config, "deepseek").await?;
     let cleared = api::get_config(&app.client_config).await?;
     let cleared_providers = cleared.providers.expect("providers list");
-    let cleared_openai = cleared_providers
+    let cleared_provider = cleared_providers
         .iter()
-        .find(|p| p.id == "openai")
+        .find(|p| p.id == "deepseek")
         .expect("provider entry remains after clear");
-    assert!(cleared_openai.api_key.clone().flatten().is_none());
+    assert!(cleared_provider.api_key.clone().flatten().is_none());
     Ok(())
 }
