@@ -1,36 +1,33 @@
-<h1 align="center">Koharu</h1>
+<h1 align="center">Lilith Team Edition</h1>
 
 <p align="center">ML-powered manga translator, written in <b>Rust</b>.</p>
 
 <p align="center">
-<a href="https://github.com/mayocream/koharu/releases/latest" target="_blank"><img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/mayocream/koharu/total?style=for-the-badge&link=https%3A%2F%2Fgithub.com%2Fmayocream%2Fkoharu%2Freleases%2Flatest"></a>
+A fork of <a href="https://github.com/mayocream/koharu">Koharu</a> by Mayo, tailored for the Lilith team.
 </p>
 
-<p align="center">
-<a href="https://trendshift.io/repositories/20649" target="_blank"><img src="https://trendshift.io/api/badge/repositories/20649" alt="mayocream%2Fkoharu | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
-</p>
+Lilith Team Edition is a local-first manga/comic translator built on [Koharu](https://github.com/mayocream/koharu). It runs the entire translation pipeline — text detection, OCR, inpainting, translation, and text rendering — locally on your machine, keeping your data private.
 
-<p align="center">
-<a href="https://koharu.rs/how-to/install-koharu/" target="_blank">Getting Started</a> · <a href="https://koharu.rs/how-to/" target="_blank">Docs</a> · <a href="https://github.com/mayocream/koharu/issues" target="_blank">Bug reports</a> · <a href="https://discord.gg/mHvHkxGnUY" target="_blank">Discord</a>
-</p>
+This fork rebrands the UI, adjusts the translation provider set, removes the Codex image-generation and headless/Docker/MCP modes, and adds a Yandex Translate provider plus text export. See [CHANGELOG.md](./CHANGELOG.md) for the full list of changes.
 
-<p align="center">
-<a href="https://koharu.rs/ja-JP/" target="_blank">日本語</a> | <a href="https://koharu.rs/zh-CN/" target="_blank">简体中文</a>
-</p>
-
-Koharu introduces a local-first workflow for manga translation, utilizing the power of ML to automate the process. It combines the capabilities of object detection, OCR, inpainting, and LLMs to create a seamless translation experience.
-
-Under the hood, Koharu uses [candle](https://github.com/huggingface/candle) and [llama.cpp](https://github.com/ggml-org/llama.cpp) for high-performance inference, with [Tauri](https://github.com/tauri-apps/tauri) for the desktop app. All components are written in Rust, ensuring safety and speed.
+Under the hood, it uses [candle](https://github.com/huggingface/candle) and [llama.cpp](https://github.com/ggml-org/llama.cpp) for high-performance inference, with [Tauri](https://github.com/tauri-apps/tauri) for the desktop app. All components are written in Rust, ensuring safety and speed.
 
 > [!NOTE]
-> Koharu runs its vision models and LLMs **locally** on your machine to keep your data private and secure.
+> The app runs its vision models and LLMs **locally** on your machine to keep your data private and secure.
 
 ---
 
-![screenshot](docs/en-US/assets/koharu-screenshot-en.png)
+## Differences from upstream Koharu
+
+- **Branding:** coral-red accent, "Lilith Team Edition" name and abstract logo (UI locales restricted to English and Russian).
+- **Translation providers:** Claude, DeepSeek, Google Cloud Translation, and **Yandex Translate** (added) are kept; OpenAI, Gemini, DeepL, and Caiyun are removed. OpenAI-compatible (local LLMs) is retained.
+- **Removed:** Codex (AI image-to-image) feature, headless mode (`--headless`/`--port`/`--host`), Docker image, and the MCP server.
+- **Added:** Export OCR text + translation to `.txt` (current page and whole project).
+- **Build:** `flash-attn` is now an optional Cargo feature (off by default) to make CUDA builds lighter.
+- See [CHANGELOG.md](./CHANGELOG.md) for details.
 
 > [!NOTE]
-> Support and discussion are available on the [Discord server](https://discord.gg/mHvHkxGnUY).
+> Upstream documentation lives at [koharu.rs](https://koharu.rs/how-to/). Some pages there describe features (Codex, headless, MCP) that this fork has removed.
 
 ## Features
 
@@ -253,9 +250,9 @@ For LM Studio, OpenRouter, and other OpenAI-style endpoints, see [Use OpenAI-Com
 
 ## Installation
 
-You can download the latest release of Koharu from the [releases page](https://github.com/mayocream/koharu/releases/latest).
+Build from source following the [Development](#development) instructions below. Prebuilt binaries are not published for this fork; if you need the upstream installers (Windows/macOS/Linux), see the [original Koharu releases](https://github.com/mayocream/koharu/releases/latest) — note that those builds include features (Codex, headless) removed in this fork.
 
-We provide prebuilt binaries for Windows, macOS, and Linux. For the standard install flow, see [Install Koharu](https://koharu.rs/how-to/install-koharu/). If something goes wrong, see [Troubleshooting](https://koharu.rs/how-to/troubleshooting/).
+For first-run guidance and troubleshooting, the [upstream docs](https://koharu.rs/how-to/install-koharu/) are still largely applicable.
 
 Koharu can run offline with local models once the required runtimes, models, and fonts are already present on disk.
 
@@ -373,16 +370,9 @@ The desktop binary needs a GPU backend at runtime. The most reliable cross-platf
 
 For platform-specific build notes, see [Build From Source](https://koharu.rs/how-to/build-from-source/). For the local development workflow, see [Contributing](https://koharu.rs/contribute/introduction/).
 
-## Sponsorship
+## Acknowledgements
 
-If Koharu is useful in your workflow, consider sponsoring the project.
-
-- [GitHub Sponsors](https://github.com/sponsors/mayocream)
-- [Patreon](https://www.patreon.com/mayocream)
-
-## Contributors ❤️
-
-Thanks to all the contributors who have helped make Koharu better!
+Lilith Team Edition is a fork of [Koharu](https://github.com/mayocream/koharu) by [Mayo](https://github.com/mayocream). All credit for the original project goes to Mayo and the upstream contributors.
 
 <a href="https://github.com/mayocream/koharu/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=mayocream/koharu" />
@@ -390,4 +380,4 @@ Thanks to all the contributors who have helped make Koharu better!
 
 ## License
 
-Koharu is licensed under the [GNU General Public License v3.0](LICENSE).
+This project is licensed under the [GNU General Public License v3.0](LICENSE), inherited from the upstream Koharu project.

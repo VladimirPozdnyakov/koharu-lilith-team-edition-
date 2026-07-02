@@ -18,6 +18,8 @@ fn empty_pipeline_request(steps: Vec<String>) -> models::StartPipelineRequest {
         target_language: None,
         system_prompt: None,
         default_font: None,
+        reading_order: None,
+        text_node_ids: None,
     }
 }
 
@@ -146,6 +148,8 @@ async fn renderer_pipeline_creates_final_render_for_pages_without_text_blocks() 
             target_language: None,
             system_prompt: None,
             default_font: None,
+            reading_order: None,
+            text_node_ids: None,
         },
     )
     .await?;
@@ -179,6 +183,7 @@ async fn renderer_pipeline_creates_final_render_for_pages_without_text_blocks() 
         .client
         .post(format!("{}/projects/current/export", app.base_url))
         .json(&models::ExportProjectRequest {
+            default_font: None,
             format: models::ExportFormat::Rendered,
             pages: None,
         })
