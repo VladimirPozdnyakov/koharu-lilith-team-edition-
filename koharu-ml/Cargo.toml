@@ -45,6 +45,11 @@ cuda = [
     "candle-transformers/cuda",
     "candle-transformers/cudnn",
     "cudarc",
+]
+# Flash-attention: accelerates FLUX.2 Klein inpainting on CUDA at the cost of a
+# much heavier build (clones CUTLASS, compiles CUDA kernels). Off by default;
+# enable with `--features cuda,flash-attn` for maximum inpainting speed.
+flash-attn = [
     "candle-flash-attn",
     "candle-flash-attn/cudnn",
 ]

@@ -1,3 +1,33 @@
+## Lilith Team Edition
+
+### 🎨 Changed
+
+- Rebranded to "Lilith Team Edition"; coral-red accent replaces rose.
+- Replaced the mascot logo with an abstract placeholder.
+- Simplified the editor UI: Border/Stroke controls collapse under "Advanced", reduced uppercase-micro-label noise across panels, tabs, and settings.
+- Restricted UI locales to English and Russian.
+
+### ✨ Added
+
+- Yandex Translate provider (Yandex Cloud Translate API v2, `Api-Key` auth).
+- Export OCR text + translation to `.txt` (current page and whole project, parallel "OCR → translation" format).
+- Optional `flash-attn` Cargo feature (off by default) to accelerate FLUX.2 Klein inpainting on CUDA.
+- Windows build recipe in README (NVCC flags, LLVM/libclang, Vulkan Runtime).
+
+### ➖ Removed
+
+- Codex (AI image-to-image) feature — UI, backend module, CLI binary, and API endpoints.
+- Headless mode (`--headless`, `--port`, `--host` CLI flags) and Docker image/CI.
+- MCP server (`/mcp` endpoint, `rmcp` dependency).
+- OpenAI, Gemini, DeepL, and Caiyun translation providers.
+
+### 🔧 Kept
+
+- Claude, DeepSeek, Google Cloud Translation, Yandex Translate, and OpenAI-compatible providers.
+- `--download`, `--cpu`, `--debug` CLI flags.
+- All GPU backends (CUDA, Metal, ZLUDA, Vulkan, CPU fallback) and the full ML translation pipeline.
+
+
 ## [0.61.2](https://github.com/mayocream/koharu/compare/0.61.1..0.61.2) - 2026-06-16
 
 ### 🐛 Bug Fixes

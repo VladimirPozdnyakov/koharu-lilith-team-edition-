@@ -330,6 +330,47 @@ bun run build
 
 The built binaries are written to `target/release`.
 
+### Building on Windows
+
+Windows builds with CUDA require a complete toolchain. Install **all** of the following before the first `bun run build`:
+
+| # | Component | Source | Verification |
+|---|-----------|--------|--------------|
+| 1 | Rust | https://www.rust-lang.org/tools/install | `cargo --version` |
+| 2 | Bun | https://bun.sh/ | `bun --version` |
+| 3 | CUDA Toolkit 13.x | https://developer.nvidia.com/cuda-downloads | `nvcc --version` |
+| 4 | MSVC Build Tools (cl.exe) | Visual Studio Installer → "Desktop development with C++" | `cl` |
+| 5 | Git | https://git-scm.com/download/win | `git --version` |
+| 6 | LLVM / libclang | https://releases.llvm.org/ → set `LIBCLANG_PATH` | `libclang.dll` exists |
+
+Once installed, set the build environment (cmd):
+
+```cmd
+set NVCC_PREPEND_FLAGS=-std=c++17 -Xcompiler=/Zc:preprocessor
+set LIBCLANG_PATH=C:\Program Files\LLVM\bin
+bun run build
+```
+
+Notes:
+- `-std=c++17` is required by CUDA 13. `-Xcompiler=/Zc:preprocessor` enables the MSVC conforming preprocessor required by CCCL (shipped with CUDA 13).
+- `git` must be on `PATH` — it is only required when the `flash-attn` feature is enabled (it clones CUTLASS). With `flash-attn` off (the default), `git` is not needed for the build.
+- `LIBCLANG_PATH` must point to the folder containing `libclang.dll` (used by `bindgen` for llama.cpp bindings).
+
+#### Flash-attention (optional, off by default)
+
+Flash-attention accelerates the FLUX.2 Klein inpainting stage on CUDA but makes the build much heavier (clones CUTLASS, compiles large CUDA kernels). It is **off by default**. To enable it, add `flash-attn` to the features array in `koharu/tauri.windows.conf.json`:
+
+```json
+"features": ["cuda", "flash-attn"]
+```
+
+#### Running the built binary
+
+The desktop binary needs a GPU backend at runtime. The most reliable cross-platform path is **Vulkan**:
+
+- Install the [Vulkan Runtime](https://vulkan.lunarg.com/sdk/home) (the "Vulkan Runtime" installer, not the full SDK) so `vulkan-1.dll` is present. Without it the app fails to start with `LoadLibraryExW ... os error 126`.
+- Alternatively run in CPU mode: `koharu.exe --cpu` (slower, but verifies the UI).
+
 For platform-specific build notes, see [Build From Source](https://koharu.rs/how-to/build-from-source/). For the local development workflow, see [Contributing](https://koharu.rs/contribute/introduction/).
 
 ## Sponsorship

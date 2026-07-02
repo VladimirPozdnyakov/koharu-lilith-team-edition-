@@ -50,6 +50,7 @@ winreg = { workspace = true }
 
 [features]
 cuda = ["koharu-app/cuda"]
+flash-attn = ["koharu-app/flash-attn"]
 metal = ["koharu-app/metal"]
 
 [build-dependencies]
