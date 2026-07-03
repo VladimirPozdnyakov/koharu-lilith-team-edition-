@@ -20,6 +20,7 @@
     "undo": "Отменить",
     "redo": "Повторить",
     "selectAll": "Выделить всё",
+    "findReplace": "Найти и заменить...",
     "export": "Экспортировать...",
     "exportPsd": "Экспортировать PSD...",
     "exportAllInpainted": "Экспортировать все изображения после инпейнтинга...",
@@ -211,6 +212,19 @@
     "effectBold": "Жирный",
     "effectBorder": "Обводка",
     "advanced": "Дополнительно",
+    "presetNone": "(без пресета)",
+    "presetSave": "Сохранить текущий стиль как пресет",
+    "presetNamePlaceholder": "Имя пресета",
+    "presetApplyToAll": "Применить пресет ко всем блокам",
+    "presetManage": "Управление пресетами",
+    "presetManageDescription": "Сохранённые пресеты рендеринга",
+    "presetEmpty": "Пока нет пресетов. Настройте стиль и сохраните его.",
+    "presetExportOne": "Экспортировать",
+    "presetExportAll": "Экспортировать все",
+    "presetImport": "Импорт",
+    "presetRename": "Переименовать",
+    "presetDuplicate": "Дублировать",
+    "presetDelete": "Удалить",
     "strokeColorLabel": "Цвет обводки",
     "strokeWidthLabel": "Толщина обводки",
     "fontWeights": {
@@ -228,6 +242,20 @@
       "italicWithName": "{{name}} Курсив",
       "regularItalic": "Обычный Курсив"
     }
+  },
+  "findReplace": {
+    "title": "Найти и заменить",
+    "findPlaceholder": "Найти в переводах",
+    "replacePlaceholder": "Заменить на",
+    "caseSensitive": "Учитывать регистр",
+    "includeOcr": "Также искать в OCR-тексте",
+    "matchesFound": "{{count}} совпадение",
+    "matchesFound_other": "{{count}} совпадений",
+    "noMatches": "Нет совпадений",
+    "typeToSearch": "Введите текст для поиска по всем страницам",
+    "replaceAll": "Заменить все",
+    "replacing": "Замена...",
+    "batchLabel": "Найти и заменить"
   },
   "textBlocks": {
     "emptyPrompt": "Откройте изображение, чтобы увидеть текстовые блоки.",

@@ -5,8 +5,11 @@ import {
   AlignLeftIcon,
   AlignRightIcon,
   BoldIcon,
+  BookmarkPlusIcon,
+  CheckCheckIcon,
   ChevronDownIcon,
   ItalicIcon,
+  ListPlusIcon,
   MinusIcon,
   PlusIcon,
   SquareIcon,
@@ -14,6 +17,7 @@ import {
 import { type ComponentType, useMemo, useRef, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { RenderPresetsDialog } from '@/components/RenderPresetsDialog'
 import { Button } from '@/components/ui/button'
 import { ColorPicker } from '@/components/ui/color-picker'
 import { FontSelect, useGoogleFontPreview } from '@/components/ui/font-select'
@@ -55,6 +59,7 @@ import { applyOp, invalidateScene, queueAutoRender } from '@/lib/io/scene'
 import { ops } from '@/lib/ops'
 import { useEditorUiStore } from '@/lib/stores/editorUiStore'
 import { usePreferencesStore } from '@/lib/stores/preferencesStore'
+import { useRenderPresetsStore } from '@/lib/stores/renderPresetsStore'
 import { cn } from '@/lib/utils'
 
 const DEFAULT_COLOR: number[] = [0, 0, 0, 255]
@@ -149,6 +154,13 @@ export function RenderControlsPanel() {
   const sectionRef = useRef<HTMLDivElement>(null)
   const [sectionWidth, setSectionWidth] = useState<number>(0)
   const [advancedOpen, setAdvancedOpen] = useState(false)
+  const [presetsOpen, setPresetsOpen] = useState(false)
+  const [namingPreset, setNamingPreset] = useState(false)
+  const [presetName, setPresetName] = useState('')
+  const presets = useRenderPresetsStore((s) => s.presets)
+  const activePresetId = useRenderPresetsStore((s) => s.activePresetId)
+  const addPreset = useRenderPresetsStore((s) => s.addPreset)
+  const setActivePreset = useRenderPresetsStore((s) => s.setActivePreset)
 
   useEffect(() => {
     if (!sectionRef.current) return
@@ -329,6 +341,16 @@ export function RenderControlsPanel() {
     applyStyleToNodes(textNodes, updates, 'Bulk style update')
   }
 
+  /** Snapshot the panel's current style values for saving as a preset. */
+  const currentStyleSnapshot = (): Partial<TextStyle> => ({
+    fontFamilies: currentFont ? [currentFont] : undefined,
+    fontSize: currentFontSize ?? undefined,
+    color: currentColor,
+    stroke: normalizeStroke(currentStroke),
+    effect: normalizeEffect(currentEffect),
+    textAlign: effectiveAlign,
+  })
+
   const commitCurrentFontColorIfImplicit = () => {
     const targets = selectedNodes.length > 0 ? selectedNodes : textNodes
     if (targets.every(hasExplicitColor)) return
@@ -400,6 +422,116 @@ export function RenderControlsPanel() {
         >
           {scopeLabel}
         </span>
+      </div>
+
+      {/* Presets */}
+      <div className='flex items-center gap-1'>
+        <Select
+          value={activePresetId ?? '__none'}
+          onValueChange={(value) => {
+            if (value === '__none') {
+              setActivePreset(null)
+              return
+            }
+            const preset = presets.find((p) => p.id === value)
+            if (!preset) return
+            setActivePreset(preset.id)
+            if (selectedNodes.length > 0) applyStyleToSelected(preset.style)
+            else applyStyleToAll(preset.style)
+          }}
+        >
+          <SelectTrigger className='h-7 min-w-0 flex-1 px-2 text-xs'>
+            <SelectValue placeholder={t('render.presetNone')} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value='__none'>{t('render.presetNone')}</SelectItem>
+            {presets.map((p) => (
+              <SelectItem key={p.id} value={p.id}>
+                {p.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {namingPreset ? (
+          <div className='flex min-w-0 items-center gap-1'>
+            <Input
+              autoFocus
+              value={presetName}
+              onChange={(e) => setPresetName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && presetName.trim()) {
+                  addPreset(presetName, currentStyleSnapshot())
+                  setPresetName('')
+                  setNamingPreset(false)
+                } else if (e.key === 'Escape') {
+                  setPresetName('')
+                  setNamingPreset(false)
+                }
+              }}
+              placeholder={t('render.presetNamePlaceholder')}
+              className='h-7 min-w-0 flex-1 px-2 text-xs'
+            />
+          </div>
+        ) : (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant='outline'
+                size='icon-sm'
+                className='size-7 shrink-0'
+                disabled={!hasNodes}
+                onClick={() => {
+                  setPresetName('')
+                  setNamingPreset(true)
+                }}
+              >
+                <BookmarkPlusIcon className='size-3.5' />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side='bottom' sideOffset={4}>
+              {t('render.presetSave')}
+            </TooltipContent>
+          </Tooltip>
+        )}
+
+        {activePresetId && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant='outline'
+                size='icon-sm'
+                className='size-7 shrink-0'
+                disabled={!hasNodes}
+                onClick={() => {
+                  const preset = presets.find((p) => p.id === activePresetId)
+                  if (preset) applyStyleToAll(preset.style)
+                }}
+              >
+                <CheckCheckIcon className='size-3.5' />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side='bottom' sideOffset={4}>
+              {t('render.presetApplyToAll')}
+            </TooltipContent>
+          </Tooltip>
+        )}
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant='outline'
+              size='icon-sm'
+              className='size-7 shrink-0'
+              onClick={() => setPresetsOpen(true)}
+            >
+              <ListPlusIcon className='size-3.5' />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side='bottom' sideOffset={4}>
+            {t('render.presetManage')}
+          </TooltipContent>
+        </Tooltip>
       </div>
 
       {/* Font + Color */}
@@ -786,6 +918,8 @@ export function RenderControlsPanel() {
           </div>
         )}
       </div>
+
+      <RenderPresetsDialog open={presetsOpen} onOpenChange={setPresetsOpen} />
     </div>
   )
 }

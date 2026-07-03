@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { fitCanvasToViewport, resetCanvasScale } from "@/components/Canvas";
+import { FindReplaceDialog } from "@/components/FindReplaceDialog";
 import { SettingsDialog, type TabId } from "@/components/SettingsDialog";
 import {
   Menubar,
@@ -75,6 +76,7 @@ export function MenuBar() {
   const { t } = useTranslation();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [settingsTab, setSettingsTab] = useState<TabId>("appearance");
+  const [findReplaceOpen, setFindReplaceOpen] = useState(false);
   const hasPage = useSelectionStore((s) => s.pageId !== null);
   const hasScene = useScene().scene !== null;
   const shortcuts = usePreferencesStore((state) => state.shortcuts);
@@ -338,6 +340,16 @@ export function MenuBar() {
               {t("menu.selectAll")}
               <MenubarShortcut>{isMac ? "⌘A" : "Ctrl+A"}</MenubarShortcut>
             </MenubarItem>
+            <MenubarSeparator />
+            <MenubarItem
+              data-testid="menu-edit-find-replace"
+              className="text-[13px]"
+              disabled={!hasScene}
+              onSelect={() => setFindReplaceOpen(true)}
+            >
+              {t("menu.findReplace")}
+              <MenubarShortcut>{isMac ? "⌘F" : "Ctrl+F"}</MenubarShortcut>
+            </MenubarItem>
           </MenubarContent>
         </MenubarMenu>
         <MenubarMenu>
@@ -517,6 +529,7 @@ export function MenuBar() {
         onOpenChange={setSettingsOpen}
         defaultTab={settingsTab}
       />
+      <FindReplaceDialog open={findReplaceOpen} onOpenChange={setFindReplaceOpen} />
     </div>
   );
 }
