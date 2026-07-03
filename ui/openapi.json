@@ -2875,6 +2875,12 @@
             "type": "integer",
             "minimum": 0
           },
+          "jobElapsedMs": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Wall-clock ms since the whole run started. Used by the UI to show ETA.",
+            "minimum": 0
+          },
           "jobId": {
             "type": "string"
           },
@@ -2895,6 +2901,12 @@
                 "$ref": "#/components/schemas/PipelineStep"
               }
             ]
+          },
+          "stepElapsedMs": {
+            "type": "integer",
+            "format": "int64",
+            "description": "Wall-clock ms the just-completed step took. `0` on the first tick.",
+            "minimum": 0
           },
           "totalPages": {
             "type": "integer",

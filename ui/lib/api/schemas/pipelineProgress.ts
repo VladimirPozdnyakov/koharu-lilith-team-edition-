@@ -10,11 +10,21 @@ export interface PipelineProgress {
   currentPage: number;
   /** @minimum 0 */
   currentStepIndex: number;
+  /**
+     * Wall-clock ms since the whole run started. Used by the UI to show ETA.
+     * @minimum 0
+     */
+  jobElapsedMs?: number;
   jobId: string;
   /** @minimum 0 */
   overallPercent: number;
   status: PipelineStatus;
   step?: null | PipelineStep;
+  /**
+     * Wall-clock ms the just-completed step took. `0` on the first tick.
+     * @minimum 0
+     */
+  stepElapsedMs?: number;
   /** @minimum 0 */
   totalPages: number;
   /** @minimum 0 */

@@ -130,6 +130,8 @@ async fn start_pipeline(
             current_step_index: tick.step_index,
             total_steps: tick.total_steps,
             overall_percent: tick.overall_percent,
+            job_elapsed_ms: tick.job_elapsed_ms,
+            step_elapsed_ms: tick.step_elapsed_ms,
         }));
     });
     let warning_bus = app.bus.clone();

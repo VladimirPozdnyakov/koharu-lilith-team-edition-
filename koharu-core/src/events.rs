@@ -104,6 +104,12 @@ pub struct PipelineProgress {
     pub current_step_index: usize,
     pub total_steps: usize,
     pub overall_percent: u8,
+    /// Wall-clock ms since the whole run started. Used by the UI to show ETA.
+    #[serde(default)]
+    pub job_elapsed_ms: u64,
+    /// Wall-clock ms the just-completed step took. `0` on the first tick.
+    #[serde(default)]
+    pub step_elapsed_ms: u64,
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, JsonSchema, ToSchema)]
@@ -229,6 +235,8 @@ mod tests {
             current_step_index: 2,
             total_steps: 5,
             overall_percent: 40,
+            job_elapsed_ms: 12_500,
+            step_elapsed_ms: 3_200,
         };
         let encoded = serde_json::to_string(&value).expect("serialize");
         let _: PipelineProgress = serde_json::from_str(&encoded).expect("deserialize");

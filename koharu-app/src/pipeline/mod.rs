@@ -18,6 +18,7 @@ pub use engines::support;
 
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
+use std::time::Instant;
 
 use anyhow::{Result, bail};
 use koharu_core::{Op, PageId, PipelineStep};
@@ -46,6 +47,11 @@ pub struct ProgressTick {
     pub page_index: usize,
     pub total_pages: usize,
     pub overall_percent: u8,
+    /// Wall-clock elapsed since the whole run started (ms).
+    pub job_elapsed_ms: u64,
+    /// Wall-clock elapsed of the just-completed step (ms). `0` on the
+    /// first tick (nothing finished yet) and the final 100% tick.
+    pub step_elapsed_ms: u64,
 }
 
 #[derive(Debug, Clone)]
@@ -152,6 +158,10 @@ pub async fn run(
     let total_units = (total_pages * total_steps) as u64;
     let mut completed: u64 = 0;
     let mut warning_count: usize = 0;
+    let job_started = Instant::now();
+    // Elapsed of the previously-completed step, carried into the next tick so
+    // the UI can show how long the last stage took.
+    let mut last_step_elapsed_ms: u64 = 0;
 
     'pages: for (page_index, page_id) in pages.iter().enumerate() {
         for (seq, &i) in order.iter().enumerate() {
@@ -170,6 +180,8 @@ pub async fn run(
                     page_index,
                     total_pages,
                     overall_percent: percent,
+                    job_elapsed_ms: job_started.elapsed().as_millis() as u64,
+                    step_elapsed_ms: last_step_elapsed_ms,
                 });
             }
 
@@ -211,9 +223,11 @@ pub async fn run(
                 llm: &llm,
                 renderer: &renderer,
             };
+            let step_started = Instant::now();
             let step_result = async { engine.run(ctx).await }
                 .instrument(tracing::info_span!("step", engine = info.id, page = %page_id))
                 .await;
+            last_step_elapsed_ms = step_started.elapsed().as_millis() as u64;
             let ops = match step_result {
                 Ok(ops) => ops,
                 Err(err) => {
@@ -268,6 +282,8 @@ pub async fn run(
             page_index: total_pages.saturating_sub(1),
             total_pages,
             overall_percent: 100,
+            job_elapsed_ms: job_started.elapsed().as_millis() as u64,
+            step_elapsed_ms: last_step_elapsed_ms,
         });
     }
     Ok(RunOutcome { warning_count })

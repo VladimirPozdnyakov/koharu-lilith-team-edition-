@@ -23,6 +23,27 @@ const clampProgress = (value?: number) => {
   return Math.max(0, Math.min(100, Math.round(value)))
 }
 
+/** Format milliseconds into a compact "1m 23s" / "45s" / "0.5s" string. */
+function formatDuration(ms: number): string {
+  if (!Number.isFinite(ms) || ms < 0) return ''
+  const totalSec = Math.round(ms / 1000)
+  if (totalSec < 1) return '<1s'
+  if (totalSec < 60) return `${totalSec}s`
+  const m = Math.floor(totalSec / 60)
+  const s = totalSec % 60
+  if (m < 60) return s ? `${m}m ${s}s` : `${m}m`
+  const h = Math.floor(m / 60)
+  const remM = m % 60
+  return remM ? `${h}h ${remM}m` : `${h}h`
+}
+
+/** Estimate remaining ms from elapsed time and overall percent (1..99). */
+function estimateEtaMs(elapsedMs?: number, percent?: number): number | undefined {
+  if (typeof elapsedMs !== 'number' || typeof percent !== 'number') return undefined
+  if (percent <= 0 || percent >= 100) return undefined
+  return Math.round((elapsedMs * (100 - percent)) / percent)
+}
+
 function BubbleCard({ children }: { children: ReactNode }) {
   return (
     <div className='rounded-2xl border border-border bg-card/95 p-4 shadow-[0_15px_60px_rgba(0,0,0,0.12)] backdrop-blur'>
@@ -175,6 +196,18 @@ function JobCard({ job, onCancel, t }: { job: JobEntry; onCancel: () => void; t:
     [pageText, stepLabel].filter(Boolean).join(' \u00b7 ') || t('operations.inProgress')
   const warnings = job.warnings ?? []
 
+  // Timing: show elapsed since the run started + estimated remaining.
+  const elapsedMs = progress?.jobElapsedMs
+  const etaMs = estimateEtaMs(elapsedMs, percent)
+  const timingParts: string[] = []
+  if (typeof elapsedMs === 'number' && elapsedMs > 0) {
+    timingParts.push(formatDuration(elapsedMs))
+  }
+  if (typeof etaMs === 'number') {
+    timingParts.push(t('operations.eta', { time: formatDuration(etaMs) }))
+  }
+  const timingText = timingParts.join(' \u00b7 ')
+
   return (
     <BubbleCard>
       <div data-testid='operation-card' className='flex items-start gap-3'>
@@ -186,6 +219,11 @@ function JobCard({ job, onCancel, t }: { job: JobEntry; onCancel: () => void; t:
                 {t('operations.processCurrent')}
               </div>
               <div className='text-xs text-muted-foreground'>{subtitle}</div>
+              {timingText && (
+                <div className='text-[11px] font-medium tabular-nums text-muted-foreground/80'>
+                  {timingText}
+                </div>
+              )}
             </div>
           </div>
           <ProgressBar percent={percent} />

@@ -82,6 +82,7 @@
   "operations": {
     "title": "Working",
     "inProgress": "Please wait while we finish up.",
+    "eta": "~{{time}} left",
     "loadKhr": "Loading project",
     "saveKhr": "Saving project",
     "loadModel": "Loading LLM model",
