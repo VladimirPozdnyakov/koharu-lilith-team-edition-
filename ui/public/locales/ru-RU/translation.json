@@ -355,6 +355,8 @@
     "aboutUpdate": "Доступно обновление ({{version}})",
     "aboutAuthor": "Автор",
     "aboutRepository": "Репозиторий",
+    "aboutForkAuthor": "Автор форка",
+    "aboutForkRepo": "Репозиторий форка",
     "device": "Устройство",
     "deviceDescription": "Информация об аппаратном ускорении.",
     "deviceMl": "ML Compute",

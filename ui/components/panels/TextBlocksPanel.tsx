@@ -2,7 +2,7 @@
 
 import { Languages, LoaderCircleIcon, Trash2Icon } from 'lucide-react'
 import { motion } from 'motion/react'
-import { useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import {
@@ -56,6 +56,50 @@ export function TextBlocksPanel() {
   const readingOrder = useEditorUiStore((s) => s.readingOrder)
   const setReadingOrder = useEditorUiStore((s) => s.setReadingOrder)
 
+  // Sort text nodes by the active reading order so the panel always reflects it.
+  // `rtl`/`ltr` sort geometrically (top-to-bottom, then right-to-left /
+  // left-to-right); `custom` preserves the scene order (set by drag-reorder
+  // and the backend ReorderNodes op).
+  const orderedNodes = useMemo(() => {
+    if (readingOrder === 'ltr') {
+      return [...textNodes].sort(
+        (a, b) =>
+          a.transform.y === b.transform.y
+            ? a.transform.x - b.transform.x
+            : a.transform.y - b.transform.y,
+      )
+    }
+    if (readingOrder === 'rtl') {
+      return [...textNodes].sort(
+        (a, b) =>
+          a.transform.y === b.transform.y
+            ? b.transform.x - a.transform.x
+            : a.transform.y - b.transform.y,
+      )
+    }
+    return textNodes
+  }, [textNodes, readingOrder])
+
+  // Drag-reorder state (custom order).
+  const [draggedId, setDraggedId] = useState<string | null>(null)
+  const [dragOverId, setDragOverId] = useState<string | null>(null)
+
+  const handleReorder = async (fromId: string, toId: string) => {
+    if (!page || fromId === toId) return
+    const order = orderedNodes.map((n) => n.id)
+    const from = order.indexOf(fromId)
+    const to = order.indexOf(toId)
+    if (from < 0 || to < 0) return
+    const next = [...order]
+    const [moved] = next.splice(from, 1)
+    next.splice(to, 0, moved)
+    // Persist as the new custom order.
+    await applyOp(ops.reorderNodes(page.id, next, order))
+    setReadingOrder('custom')
+    await invalidateScene()
+    queueAutoRender(page.id)
+  }
+
   if (!page) {
     return (
       <div className='flex flex-1 items-center justify-center text-xs text-muted-foreground'>
@@ -64,7 +108,7 @@ export function TextBlocksPanel() {
     )
   }
 
-  const selectedIndex = textNodes.findIndex((n) => selectedIds.has(n.id))
+  const selectedIndex = orderedNodes.findIndex((n) => selectedIds.has(n.id))
   const accordionValue = selectedIndex >= 0 ? selectedIndex.toString() : ''
 
   const patchText = async (nodeId: string, patch: TextDataPatch) => {
@@ -107,8 +151,8 @@ export function TextBlocksPanel() {
   return (
     <div className='flex min-h-0 flex-1 flex-col' data-testid='panels-textblocks'>
       <div className='flex items-center justify-between border-b border-border px-2 py-1.5 text-xs font-medium text-muted-foreground'>
-        <span data-testid='textblocks-count' data-count={textNodes.length}>
-          {t('textBlocks.title', { count: textNodes.length })}
+        <span data-testid='textblocks-count' data-count={orderedNodes.length}>
+          {t('textBlocks.title', { count: orderedNodes.length })}
         </span>
         <div className='flex items-center gap-1.5'>
           <span className='font-normal uppercase opacity-50'>{t('textBlocks.readingOrder')}:</span>
@@ -160,7 +204,7 @@ export function TextBlocksPanel() {
         data-testid='textblocks-scroll'
       >
         <div className='p-2'>
-          {textNodes.length === 0 ? (
+          {orderedNodes.length === 0 ? (
             <p className='rounded-md border border-dashed border-border p-2 text-xs text-muted-foreground'>
               {t('textBlocks.none')}
             </p>
@@ -181,19 +225,51 @@ export function TextBlocksPanel() {
               }}
               className='flex flex-col gap-1'
             >
-              {textNodes.map((node, index) => (
-                <BlockCard
+              {orderedNodes.map((node, index) => (
+                <div
                   key={node.id}
-                  node={node}
-                  index={index}
-                  selected={selectedIds.has(node.id)}
-                  onToggleSelect={() => select(node.id, true)}
-                  onPatch={(patch) => void patchText(node.id, patch)}
-                  onDelete={() => void removeNode(node.id)}
-                  onGenerate={() => void generate(node.id)}
-                  processing={isProcessing}
-                  llmReady={llmReady}
-                />
+                  draggable={readingOrder === 'custom'}
+                  onDragStart={(e) => {
+                    if (readingOrder !== 'custom') return
+                    setDraggedId(node.id)
+                    e.dataTransfer.effectAllowed = 'move'
+                  }}
+                  onDragOver={(e) => {
+                    if (readingOrder !== 'custom' || !draggedId) return
+                    e.preventDefault()
+                    e.dataTransfer.dropEffect = 'move'
+                    setDragOverId(node.id)
+                  }}
+                  onDrop={(e) => {
+                    if (readingOrder !== 'custom' || !draggedId) return
+                    e.preventDefault()
+                    const from = draggedId
+                    setDraggedId(null)
+                    setDragOverId(null)
+                    void handleReorder(from, node.id)
+                  }}
+                  onDragEnd={() => {
+                    setDraggedId(null)
+                    setDragOverId(null)
+                  }}
+                  className={
+                    dragOverId === node.id && draggedId && draggedId !== node.id
+                      ? 'ring-2 ring-primary rounded-md'
+                      : ''
+                  }
+                >
+                  <BlockCard
+                    node={node}
+                    index={index}
+                    selected={selectedIds.has(node.id)}
+                    onToggleSelect={() => select(node.id, true)}
+                    onPatch={(patch) => void patchText(node.id, patch)}
+                    onDelete={() => void removeNode(node.id)}
+                    onGenerate={() => void generate(node.id)}
+                    processing={isProcessing}
+                    llmReady={llmReady}
+                  />
+                </div>
               ))}
             </Accordion>
           )}

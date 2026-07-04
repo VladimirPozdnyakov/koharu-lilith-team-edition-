@@ -134,6 +134,7 @@ async function updateConfig(next: UpdateConfigBody): Promise<AppConfig> {
 }
 
 const GITHUB_REPO = "mayocream/koharu";
+const FORK_REPO = "VladimirPozdnyakov/koharu-lilith-team-edition-";
 
 const TABS = [
   { id: "appearance", icon: PaletteIcon, labelKey: "settings.appearance" },
@@ -1245,6 +1246,28 @@ function AboutPane({
               size="xs"
               onClick={() =>
                 void openExternalUrl(`https://github.com/${GITHUB_REPO}`)
+              }
+            >
+              GitHub
+            </Button>
+          </InfoRow>
+          <InfoRow label={t("settings.aboutForkAuthor")}>
+            <Button
+              variant="link"
+              size="xs"
+              onClick={() =>
+                void openExternalUrl(`https://github.com/VladimirPozdnyakov`)
+              }
+            >
+              Vladimir Pozdnyakov
+            </Button>
+          </InfoRow>
+          <InfoRow label={t("settings.aboutForkRepo")}>
+            <Button
+              variant="link"
+              size="xs"
+              onClick={() =>
+                void openExternalUrl(`https://github.com/${FORK_REPO}`)
               }
             >
               GitHub

@@ -371,6 +371,8 @@
     "aboutUpdate": "Update available ({{version}})",
     "aboutAuthor": "Author",
     "aboutRepository": "Repository",
+    "aboutForkAuthor": "Fork author",
+    "aboutForkRepo": "Fork repository",
     "device": "Device",
     "deviceDescription": "Hardware acceleration information.",
     "deviceMl": "ML Compute",
