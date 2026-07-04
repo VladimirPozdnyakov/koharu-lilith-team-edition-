@@ -206,6 +206,7 @@ impl Model {
         sources: &[String],
         target_language: Option<&str>,
         custom_system_prompt: Option<&str>,
+        glossary: Option<&str>,
     ) -> Result<Vec<String>> {
         if sources.is_empty() {
             return Ok(Vec::new());
@@ -219,7 +220,7 @@ impl Model {
         let translation = match &mut *guard {
             State::ReadyLocal(llm) => {
                 let opts = llm.id().default_generate_options();
-                llm.generate(&body, &opts, target_language, custom_system_prompt)
+                llm.generate(&body, &opts, target_language, custom_system_prompt, glossary)
             }
             State::ReadyProvider { target, provider } => {
                 provider
@@ -228,6 +229,7 @@ impl Model {
                         target_language,
                         &target.model_id,
                         custom_system_prompt,
+                        glossary,
                     )
                     .await
             }

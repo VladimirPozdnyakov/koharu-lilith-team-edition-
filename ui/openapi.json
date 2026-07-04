@@ -3293,6 +3293,13 @@
               "null"
             ]
           },
+          "glossary": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Optional glossary text appended to the LLM system prompt."
+          },
           "pages": {
             "type": [
               "array",

@@ -56,6 +56,18 @@ pub fn system_prompt(target_language: Language) -> String {
     )
 }
 
+/// Append a glossary section (if present) to `prompt`. The glossary is
+/// injected before the block-tag instructions in both prompt paths.
+pub fn inject_glossary(prompt: &str, glossary: Option<&str>) -> String {
+    match glossary.and_then(|s| {
+        let t = s.trim();
+        (!t.is_empty()).then_some(t)
+    }) {
+        Some(glossary) => format!("{prompt}\n\n{glossary}"),
+        None => prompt.to_string(),
+    }
+}
+
 impl PromptRenderer {
     pub fn new(model_id: ModelId, template: String, bos_token: String, eos_token: String) -> Self {
         Self {
@@ -72,13 +84,14 @@ impl PromptRenderer {
         text: impl Into<String>,
         target_language: Language,
         custom_prompt: Option<&str>,
+        glossary: Option<&str>,
     ) -> Vec<ChatMessage> {
         let text = text.into();
         let sys = match custom_prompt {
             Some(p) if !p.trim().is_empty() => {
-                format!("{p} {BLOCK_TAG_INSTRUCTIONS}")
+                inject_glossary(&format!("{p} {BLOCK_TAG_INSTRUCTIONS}"), glossary)
             }
-            _ => system_prompt(target_language),
+            _ => inject_glossary(&system_prompt(target_language), glossary),
         };
 
         match self.model_id {
@@ -102,8 +115,9 @@ impl PromptRenderer {
         prompt: String,
         target_language: Language,
         custom_prompt: Option<&str>,
+        glossary: Option<&str>,
     ) -> anyhow::Result<String> {
-        let messages = self.messages(prompt, target_language, custom_prompt);
+        let messages = self.messages(prompt, target_language, custom_prompt, glossary);
         let tmpl = self.env.template_from_str(&self.template)?;
 
         let prompt = tmpl

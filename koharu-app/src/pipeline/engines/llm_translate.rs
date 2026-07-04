@@ -27,6 +27,7 @@ impl Engine for Model {
                 &sources,
                 ctx.options.target_language.as_deref(),
                 ctx.options.system_prompt.as_deref(),
+                ctx.options.glossary.as_deref(),
             )
             .await?;
 

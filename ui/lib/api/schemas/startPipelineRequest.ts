@@ -11,6 +11,11 @@ export interface StartPipelineRequest {
   /** @nullable */
   defaultFont?: string | null;
   /**
+     * Optional glossary text appended to the LLM system prompt.
+     * @nullable
+     */
+  glossary?: string | null;
+  /**
      * `None` → whole project, `Some(pages)` → just those pages.
      * @nullable
      */

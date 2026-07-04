@@ -72,9 +72,10 @@ impl AnyProvider for OpenAiCompatibleProvider {
         target_language: Language,
         model: &'a str,
         custom_system_prompt: Option<&'a str>,
+        glossary: Option<&'a str>,
     ) -> Pin<Box<dyn Future<Output = anyhow::Result<String>> + Send + 'a>> {
         Box::pin(async move {
-            let prompt = resolve_system_prompt(custom_system_prompt, target_language);
+            let prompt = resolve_system_prompt(custom_system_prompt, target_language, glossary);
             send_chat_completion(
                 Arc::clone(&self.http_client),
                 ChatCompletionsRequest {

@@ -54,6 +54,9 @@ pub struct EngineCtx<'a> {
 pub struct PipelineRunOptions {
     pub target_language: Option<String>,
     pub system_prompt: Option<String>,
+    /// Optional glossary text appended to the system prompt for LLM
+    /// translation engines. MT providers (Google/Yandex) ignore it.
+    pub glossary: Option<String>,
     pub default_font: Option<String>,
     /// Optional text-node scope for engines that can operate on individual
     /// text blocks. Engines that render full-page artifacts ignore it.

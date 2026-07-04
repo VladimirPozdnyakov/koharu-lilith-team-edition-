@@ -114,6 +114,7 @@ impl Llm {
         opts: &GenerateOptions,
         target_language: Language,
         system_prompt: Option<&str>,
+        glossary: Option<&str>,
     ) -> Result<String> {
         if opts.max_tokens == 0 {
             return Ok(String::new());
@@ -123,6 +124,7 @@ impl Llm {
             prompt.to_string(),
             target_language,
             system_prompt,
+            glossary,
         )?;
         tracing::debug!("Generating with prompt:\n{}", prompt);
 

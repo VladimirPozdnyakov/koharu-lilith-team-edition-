@@ -52,6 +52,7 @@ impl AnyProvider for GoogleTranslateMtProvider {
         target_language: Language,
         _model: &'a str,
         _custom_system_prompt: Option<&'a str>,
+        _glossary: Option<&'a str>,
     ) -> Pin<Box<dyn Future<Output = anyhow::Result<String>> + Send + 'a>> {
         Box::pin(async move {
             let body = GoogleRequest {

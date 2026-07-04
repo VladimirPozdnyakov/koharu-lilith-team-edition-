@@ -35,12 +35,13 @@ impl AnyProvider for ClaudeProvider {
         target_language: Language,
         model: &'a str,
         custom_system_prompt: Option<&'a str>,
+        glossary: Option<&'a str>,
     ) -> Pin<Box<dyn Future<Output = anyhow::Result<String>> + Send + 'a>> {
         Box::pin(async move {
             let body = MessagesRequest {
                 model,
                 max_tokens: 8192,
-                system: resolve_system_prompt(custom_system_prompt, target_language),
+                system: resolve_system_prompt(custom_system_prompt, target_language, glossary),
                 messages: vec![UserMessage {
                     role: "user",
                     content: source.to_string(),

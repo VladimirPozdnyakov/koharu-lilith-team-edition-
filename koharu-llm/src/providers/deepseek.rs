@@ -22,6 +22,7 @@ impl AnyProvider for DeepSeekProvider {
         target_language: Language,
         model: &'a str,
         custom_system_prompt: Option<&'a str>,
+        glossary: Option<&'a str>,
     ) -> Pin<Box<dyn Future<Output = anyhow::Result<String>> + Send + 'a>> {
         Box::pin(async move {
             send_chat_completion(
@@ -31,7 +32,11 @@ impl AnyProvider for DeepSeekProvider {
                     endpoint: "https://api.deepseek.com/chat/completions".to_string(),
                     auth: ChatCompletionsAuth::Bearer(self.api_key.clone()),
                     model: model.to_string(),
-                    system_prompt: resolve_system_prompt(custom_system_prompt, target_language),
+                    system_prompt: resolve_system_prompt(
+                        custom_system_prompt,
+                        target_language,
+                        glossary,
+                    ),
                     user_prompt: source.to_string(),
                     temperature: Some(1.3),
                     max_tokens: None,

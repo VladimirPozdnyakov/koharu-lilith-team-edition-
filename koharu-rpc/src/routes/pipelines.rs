@@ -46,6 +46,9 @@ pub struct StartPipelineRequest {
     pub target_language: Option<String>,
     #[serde(default)]
     pub system_prompt: Option<String>,
+    /// Optional glossary text appended to the LLM system prompt.
+    #[serde(default)]
+    pub glossary: Option<String>,
     #[serde(default)]
     pub default_font: Option<String>,
     #[serde(default)]
@@ -84,6 +87,7 @@ async fn start_pipeline(
         options: PipelineRunOptions {
             target_language: req.target_language,
             system_prompt: req.system_prompt,
+            glossary: req.glossary,
             default_font: req.default_font,
             text_node_ids: req.text_node_ids,
             region: req.region,
