@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 
 import { fitCanvasToViewport, resetCanvasScale } from "@/components/Canvas";
 import { FindReplaceDialog } from "@/components/FindReplaceDialog";
+import { GlossaryDialog } from "@/components/GlossaryDialog";
 import { SettingsDialog, type TabId } from "@/components/SettingsDialog";
 import {
   Menubar,
@@ -36,6 +37,7 @@ import {
   undoOp,
 } from "@/lib/io/scene";
 import { formatShortcutForDisplay, getPlatform } from "@/lib/shortcutUtils";
+import { getGlossaryForPrompt } from "@/lib/glossary-utils";
 import { useEditorUiStore } from "@/lib/stores/editorUiStore";
 import { usePreferencesStore } from "@/lib/stores/preferencesStore";
 import { useSelectionStore } from "@/lib/stores/selectionStore";
@@ -77,6 +79,7 @@ export function MenuBar() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [settingsTab, setSettingsTab] = useState<TabId>("appearance");
   const [findReplaceOpen, setFindReplaceOpen] = useState(false);
+  const [glossaryOpen, setGlossaryOpen] = useState(false);
   const hasPage = useSelectionStore((s) => s.pageId !== null);
   const hasScene = useScene().scene !== null;
   const shortcuts = usePreferencesStore((state) => state.shortcuts);
@@ -117,6 +120,7 @@ export function MenuBar() {
       pages: opts.pageId ? [opts.pageId] : undefined,
       targetLanguage: editor.selectedLanguage,
       systemPrompt: prefs.customSystemPrompt,
+      glossary: getGlossaryForPrompt(),
       defaultFont: prefs.defaultFont,
       readingOrder:
         editor.readingOrder === "custom" ? undefined : editor.readingOrder,
@@ -149,6 +153,7 @@ export function MenuBar() {
       pages: opts.pageId ? [opts.pageId] : undefined,
       targetLanguage: editor.selectedLanguage,
       systemPrompt: prefs.customSystemPrompt,
+      glossary: getGlossaryForPrompt(),
       defaultFont: prefs.defaultFont,
       readingOrder:
         editor.readingOrder === "custom" ? undefined : editor.readingOrder,
@@ -350,6 +355,14 @@ export function MenuBar() {
               {t("menu.findReplace")}
               <MenubarShortcut>{isMac ? "⌘F" : "Ctrl+F"}</MenubarShortcut>
             </MenubarItem>
+            <MenubarSeparator />
+            <MenubarItem
+              data-testid="menu-edit-glossaries"
+              className="text-[13px]"
+              onSelect={() => setGlossaryOpen(true)}
+            >
+              {t("menu.glossaries")}
+            </MenubarItem>
           </MenubarContent>
         </MenubarMenu>
         <MenubarMenu>
@@ -530,6 +543,7 @@ export function MenuBar() {
         defaultTab={settingsTab}
       />
       <FindReplaceDialog open={findReplaceOpen} onOpenChange={setFindReplaceOpen} />
+      <GlossaryDialog open={glossaryOpen} onOpenChange={setGlossaryOpen} />
     </div>
   );
 }

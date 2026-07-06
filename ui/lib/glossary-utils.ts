@@ -1,6 +1,28 @@
 'use client'
 
+import { useGlossariesStore } from '@/lib/stores/glossariesStore'
 import type { Glossary, GlossaryEntry } from '@/lib/stores/glossariesStore'
+
+/**
+ * React hook returning the formatted glossary string for the active
+ * glossaries, or `undefined` if there is nothing to inject. Use in
+ * pipeline-launch sites alongside `customSystemPrompt`.
+ */
+export function useGlossaryForPrompt(): string | undefined {
+  const glossaries = useGlossariesStore((s) => s.glossaries)
+  const activeGlossaryIds = useGlossariesStore((s) => s.activeGlossaryIds)
+  return formatGlossaryForPrompt(glossaries, activeGlossaryIds) ?? undefined
+}
+
+/**
+ * Non-hook variant: read the current store state and return the formatted
+ * glossary string (or `undefined`). Use inside event handlers / getState().
+ */
+export function getGlossaryForPrompt(): string | undefined {
+  const { glossaries, activeGlossaryIds } = useGlossariesStore.getState()
+  return formatGlossaryForPrompt(glossaries, activeGlossaryIds) ?? undefined
+}
+
 
 /**
  * Collect entries from all active glossaries, in a stable order

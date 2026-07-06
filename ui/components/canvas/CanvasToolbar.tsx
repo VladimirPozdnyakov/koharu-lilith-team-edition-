@@ -33,6 +33,7 @@ import {
   useGetCurrentLlm,
 } from '@/lib/api/default/default'
 import type { LlmCatalog, LlmCatalogModel, LlmProviderCatalog, LlmTarget } from '@/lib/api/schemas'
+import { getGlossaryForPrompt } from '@/lib/glossary-utils'
 import { useEditorUiStore } from '@/lib/stores/editorUiStore'
 import { useJobsStore } from '@/lib/stores/jobsStore'
 import { usePreferencesStore } from '@/lib/stores/preferencesStore'
@@ -128,6 +129,7 @@ function WorkflowButtons() {
       pages: [pageId],
       targetLanguage: editor.selectedLanguage,
       systemPrompt: prefs.customSystemPrompt,
+      glossary: getGlossaryForPrompt(),
       defaultFont: prefs.defaultFont,
       readingOrder: editor.readingOrder === 'custom' ? undefined : editor.readingOrder,
     })

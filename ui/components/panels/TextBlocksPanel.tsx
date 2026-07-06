@@ -24,6 +24,7 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useCurrentPage, useTextNodes, type TextNodeEntry } from '@/hooks/useCurrentPage'
 import { getConfig, startPipeline, useGetCurrentLlm } from '@/lib/api/default/default'
+import { getGlossaryForPrompt } from '@/lib/glossary-utils'
 import { fetchApi } from '@/lib/api/fetch'
 import type { TextDataPatch } from '@/lib/api/schemas'
 import { applyOp, invalidateScene, queueAutoRender, reorderPageTextNodes } from '@/lib/io/scene'
@@ -143,6 +144,7 @@ export function TextBlocksPanel() {
       textNodeIds: [nodeId],
       targetLanguage: editor.selectedLanguage,
       systemPrompt: prefs.customSystemPrompt,
+      glossary: getGlossaryForPrompt(),
       defaultFont: prefs.defaultFont,
       readingOrder: editor.readingOrder === 'custom' ? undefined : editor.readingOrder,
     })
