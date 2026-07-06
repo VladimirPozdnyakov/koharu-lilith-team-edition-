@@ -1,8 +1,8 @@
 'use client'
 
-import { Languages, LoaderCircleIcon, Trash2Icon } from 'lucide-react'
+import { BookPlusIcon, Languages, LoaderCircleIcon, PlusIcon, Trash2Icon } from 'lucide-react'
 import { motion } from 'motion/react'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import {
@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
 import { DraftTextarea } from '@/components/ui/draft-textarea'
+import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   Select,
@@ -24,12 +25,13 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useCurrentPage, useTextNodes, type TextNodeEntry } from '@/hooks/useCurrentPage'
 import { getConfig, startPipeline, useGetCurrentLlm } from '@/lib/api/default/default'
-import { getGlossaryForPrompt } from '@/lib/glossary-utils'
+import { collectActiveEntries, findTermRanges, getGlossaryForPrompt } from '@/lib/glossary-utils'
 import { fetchApi } from '@/lib/api/fetch'
 import type { TextDataPatch } from '@/lib/api/schemas'
 import { applyOp, invalidateScene, queueAutoRender, reorderPageTextNodes } from '@/lib/io/scene'
 import { ops } from '@/lib/ops'
 import { useEditorUiStore } from '@/lib/stores/editorUiStore'
+import { useGlossariesStore } from '@/lib/stores/glossariesStore'
 import { useJobsStore } from '@/lib/stores/jobsStore'
 import { usePreferencesStore } from '@/lib/stores/preferencesStore'
 import { useSelectionStore } from '@/lib/stores/selectionStore'
@@ -56,6 +58,29 @@ export function TextBlocksPanel() {
   )
   const readingOrder = useEditorUiStore((s) => s.readingOrder)
   const setReadingOrder = useEditorUiStore((s) => s.setReadingOrder)
+  const glossaries = useGlossariesStore((s) => s.glossaries)
+  const activeGlossaryIds = useGlossariesStore((s) => s.activeGlossaryIds)
+
+  // Autocomplete terms for the translation field = target values of active glossaries.
+  const autocompleteTerms = useMemo(
+    () => collectActiveEntries(glossaries, activeGlossaryIds).map((e) => e.target).filter(Boolean),
+    [glossaries, activeGlossaryIds],
+  )
+
+  // "Add to glossary" — adds to the first active glossary (or creates one if none active).
+  const addToGlossary = (source: string) => {
+    const state = useGlossariesStore.getState()
+    let targetId = state.activeGlossaryIds[0]
+    if (!targetId) {
+      if (state.glossaries.length === 0) {
+        targetId = state.addGlossary(t('glossary.defaultName')).id
+        state.toggleActive(targetId)
+      } else {
+        targetId = state.glossaries[0].id
+      }
+    }
+    useGlossariesStore.getState().addEntry(targetId, source, '')
+  }
 
   // Sort text nodes by the active reading order so the panel always reflects it.
   // `rtl`/`ltr` sort geometrically (top-to-bottom, then right-to-left /
@@ -270,6 +295,13 @@ export function TextBlocksPanel() {
                     onGenerate={() => void generate(node.id)}
                     processing={isProcessing}
                     llmReady={llmReady}
+                    ocrHighlights={
+                      node.data.text
+                        ? findTermRanges(node.data.text, glossaries, activeGlossaryIds)
+                        : undefined
+                    }
+                    autocompleteTerms={autocompleteTerms}
+                    onAddToGlossary={(src) => addToGlossary(src)}
                   />
                 </div>
               ))}
@@ -291,6 +323,12 @@ type BlockCardProps = {
   onGenerate: () => void
   processing: boolean
   llmReady: boolean
+  /** Glossary-term highlight ranges for the OCR field. */
+  ocrHighlights?: { start: number; end: number }[]
+  /** Autocomplete suggestions for the translation field. */
+  autocompleteTerms?: string[]
+  /** Called when the user adds the selected OCR text to the glossary. */
+  onAddToGlossary?: (source: string) => void
 }
 
 function BlockCard({
@@ -303,12 +341,31 @@ function BlockCard({
   onGenerate,
   processing,
   llmReady,
+  ocrHighlights,
+  autocompleteTerms,
+  onAddToGlossary,
 }: BlockCardProps) {
   const { t } = useTranslation()
   const data = node.data
   const hasOcr = !!data.text?.trim()
   const hasTranslation = !!data.translation?.trim()
   const preview = data.translation?.trim() || data.text?.trim()
+
+  // Ref to the OCR textarea for "add selection to glossary".
+  const ocrRef = useRef<HTMLTextAreaElement | null>(null)
+  const [addingTerm, setAddingTerm] = useState(false)
+  const [termTarget, setTermTarget] = useState('')
+
+  const handleAddTerm = () => {
+    if (!ocrRef.current) return
+    const el = ocrRef.current
+    const sel = el.value.substring(el.selectionStart ?? 0, el.selectionEnd ?? 0).trim()
+    const source = sel || (data.text ?? '').trim()
+    if (!source || !onAddToGlossary) return
+    onAddToGlossary(source)
+    setTermTarget('')
+    setAddingTerm(false)
+  }
 
   return (
     <motion.div
@@ -363,17 +420,69 @@ function BlockCard({
         <AccordionContent className='px-2 pt-1.5 pb-2 shadow-[inset_0_1px_0_0_var(--color-border)]'>
           <div className='space-y-1.5'>
             <div className='flex flex-col gap-0.5'>
-              <span className='text-[10px] text-muted-foreground'>
-                {t('textBlocks.ocrLabel')}
-              </span>
+              <div className='flex items-center justify-between'>
+                <span className='text-[10px] text-muted-foreground'>
+                  {t('textBlocks.ocrLabel')}
+                </span>
+                {onAddToGlossary && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant='ghost'
+                        size='icon-xs'
+                        className='size-5'
+                        disabled={!hasOcr}
+                        onClick={() => {
+                          const el = ocrRef.current
+                          if (el) {
+                            const sel = el.value.substring(el.selectionStart ?? 0, el.selectionEnd ?? 0).trim()
+                            if (sel) {
+                              onAddToGlossary(sel)
+                            } else {
+                              setAddingTerm((v) => !v)
+                            }
+                          } else {
+                            setAddingTerm((v) => !v)
+                          }
+                        }}
+                      >
+                        <BookPlusIcon className='size-3' />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side='left' sideOffset={4}>
+                      {t('glossary.addFromBlock')}
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+              </div>
               <DraftTextarea
+                ref={ocrRef}
                 data-testid={`textblock-ocr-${index}`}
                 value={data.text ?? ''}
                 placeholder={t('textBlocks.addOcrPlaceholder')}
                 rows={2}
                 onValueChange={(value) => onPatch({ text: value })}
+                highlights={ocrHighlights}
                 className='min-h-0 resize-none px-1.5 py-1 text-xs'
               />
+              {addingTerm && (
+                <div className='flex items-center gap-1'>
+                  <Input
+                    autoFocus
+                    value={termTarget}
+                    onChange={(e) => setTermTarget(e.target.value)}
+                    placeholder={t('glossary.addFromBlockPrompt', { source: (data.text ?? '').trim().slice(0, 20) })}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && termTarget.trim()) handleAddTerm()
+                      else if (e.key === 'Escape') setAddingTerm(false)
+                    }}
+                    className='h-6 px-1.5 text-[11px]'
+                  />
+                  <Button size='icon-xs' className='size-6 shrink-0' onClick={handleAddTerm} disabled={!termTarget.trim()}>
+                    <PlusIcon className='size-3' />
+                  </Button>
+                </div>
+              )}
             </div>
             <div className='flex flex-col gap-0.5'>
               <div className='flex items-center justify-between'>
@@ -429,6 +538,7 @@ function BlockCard({
                 placeholder={t('textBlocks.addTranslationPlaceholder')}
                 rows={2}
                 onValueChange={(value) => onPatch({ translation: value })}
+                autocompleteTerms={autocompleteTerms}
                 className='min-h-0 resize-none px-1.5 py-1 text-xs'
               />
             </div>

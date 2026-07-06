@@ -144,4 +144,7 @@
   textarea {
     @apply select-text;
   }
+  .draft-highlight {
+    @apply rounded-[2px] bg-primary/25;
+  }
 }
