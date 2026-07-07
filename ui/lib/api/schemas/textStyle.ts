@@ -13,6 +13,17 @@ export interface TextStyle {
   fontFamilies: string[];
   /** @nullable */
   fontSize?: number | null;
+  /**
+     * Extra spacing (in px) added between glyphs. `None` (= 0.0) = none.
+     * @nullable
+     */
+  letterSpacing?: number | null;
+  /**
+     * Line-height multiplier applied to the font-metric line height.
+     * `None` (= 1.0) uses the font's natural metrics.
+     * @nullable
+     */
+  lineHeight?: number | null;
   stroke?: null | TextStrokeStyle;
   textAlign?: null | TextAlign;
 }

@@ -106,6 +106,10 @@ pub struct TextLayout<'a> {
     max_width: Option<f32>,
     max_height: Option<f32>,
     alignment: Option<TextAlign>,
+    /// Multiplier applied to the font-metric line height (1.0 = natural).
+    line_height: f32,
+    /// Extra spacing (px) added to each glyph's horizontal advance.
+    letter_spacing: f32,
 }
 
 impl<'a> TextLayout<'a> {
@@ -120,7 +124,19 @@ impl<'a> TextLayout<'a> {
             max_width: None,
             max_height: None,
             alignment: None,
+            line_height: 1.0,
+            letter_spacing: 0.0,
         }
+    }
+
+    pub fn with_line_height(mut self, multiplier: f32) -> Self {
+        self.line_height = multiplier;
+        self
+    }
+
+    pub fn with_letter_spacing(mut self, spacing: f32) -> Self {
+        self.letter_spacing = spacing;
+        self
     }
 
     pub fn with_font_size(mut self, size: f32) -> Self {
@@ -239,7 +255,7 @@ impl<'a> TextLayout<'a> {
         let metrics = font_ref.metrics(Size::new(font_size), LocationRef::default());
         let ascent = metrics.ascent;
         let descent = -metrics.descent;
-        let line_height = (ascent + descent + metrics.leading).max(font_size);
+        let line_height = (ascent + descent + metrics.leading).max(font_size) * self.line_height;
 
         let bidi_info = BidiInfo::new(text, None);
 
@@ -256,6 +272,7 @@ impl<'a> TextLayout<'a> {
             } else {
                 &[]
             },
+            letter_spacing: self.letter_spacing,
         };
 
         let max_extent = if self.writing_mode.is_vertical() {

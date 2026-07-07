@@ -44,6 +44,8 @@ pub struct ShapingOptions<'a> {
     pub script: Option<Script>,
     pub font_size: f32,
     pub features: &'a [Feature],
+    /// Extra px added to each glyph's x_advance (letter spacing). 0 = none.
+    pub letter_spacing: f32,
 }
 
 /// Text shaper using HarfRust.
@@ -98,7 +100,7 @@ impl TextShaper {
                 font,
                 x_offset: (pos.x_offset as f32) * scale,
                 y_offset: (pos.y_offset as f32) * scale,
-                x_advance: (pos.x_advance as f32) * scale,
+                x_advance: (pos.x_advance as f32) * scale + options.letter_spacing,
                 y_advance: (pos.y_advance as f32) * scale,
             });
         }
@@ -107,7 +109,7 @@ impl TextShaper {
             glyphs: positioned_glyphs,
             x_advance: glyph_positions
                 .iter()
-                .map(|p| (p.x_advance as f32) * scale)
+                .map(|p| (p.x_advance as f32) * scale + options.letter_spacing)
                 .sum(),
             y_advance: glyph_positions
                 .iter()
@@ -303,6 +305,7 @@ mod tests {
             script: None,
             font_size: 16.0,
             features: &[],
+            letter_spacing: 0.0,
         };
         let runs = shape_script_runs(&shaper, &text, &[&primary, &fallback], &opts)?;
 
@@ -336,6 +339,7 @@ mod tests {
             script: Some(harfrust::Script::from_iso15924_tag(harfrust::Tag::new(b"Arab")).unwrap()),
             font_size: 16.0,
             features: &[],
+            letter_spacing: 0.0,
         };
 
         // "مرحبا" (Marhaba)
@@ -369,6 +373,7 @@ mod tests {
             script: Some(harfrust::Script::from_iso15924_tag(harfrust::Tag::new(b"Arab")).unwrap()),
             font_size: 16.0,
             features: &[],
+            letter_spacing: 0.0,
         };
 
         // Mixed script: Arabic + Hebrew (will be detected as separate script runs).

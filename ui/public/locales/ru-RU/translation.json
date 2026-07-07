@@ -213,6 +213,8 @@
     "effectItalic": "Курсив",
     "effectBold": "Жирный",
     "effectBorder": "Обводка",
+    "lineHeightLabel": "Межстрочный",
+    "letterSpacingLabel": "Межзнаковый",
     "advanced": "Дополнительно",
     "presetNone": "(без пресета)",
     "presetSave": "Сохранить текущий стиль как пресет",

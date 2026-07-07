@@ -29,6 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Slider } from '@/components/ui/slider'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { VariantItem } from '@/components/ui/variant-item'
 import {
@@ -306,6 +307,8 @@ export function RenderControlsPanel() {
       effect: updates.effect ?? current?.effect ?? null,
       stroke: updates.stroke ?? current?.stroke ?? null,
       textAlign: updates.textAlign ?? current?.textAlign ?? null,
+      lineHeight: updates.lineHeight ?? current?.lineHeight ?? null,
+      letterSpacing: updates.letterSpacing ?? current?.letterSpacing ?? null,
     }
     return ops.updateNode(page!.id, n.id, {
       data: { text: { style: nextStyle } } as never,
@@ -349,6 +352,8 @@ export function RenderControlsPanel() {
     stroke: normalizeStroke(currentStroke),
     effect: normalizeEffect(currentEffect),
     textAlign: effectiveAlign,
+    lineHeight: selectedStyle?.lineHeight ?? undefined,
+    letterSpacing: selectedStyle?.letterSpacing ?? undefined,
   })
 
   const commitCurrentFontColorIfImplicit = () => {
@@ -914,6 +919,46 @@ export function RenderControlsPanel() {
                   <PlusIcon className='size-3' />
                 </Button>
               </div>
+            </div>
+
+            {/* Line height */}
+            <div className='flex flex-col gap-1'>
+              <div className='flex items-center justify-between'>
+                <span className='text-[10px] font-medium text-muted-foreground'>
+                  {t('render.lineHeightLabel')}
+                </span>
+                <span className='text-[10px] tabular-nums text-muted-foreground'>
+                  {(selectedStyle?.lineHeight ?? 1.0).toFixed(1)}
+                </span>
+              </div>
+              <Slider
+                value={[selectedStyle?.lineHeight ?? 1.0]}
+                min={0.8}
+                max={3.0}
+                step={0.1}
+                onValueChange={([v]) => applyStyleToSelected({ lineHeight: v })}
+                className='py-1'
+              />
+            </div>
+
+            {/* Letter spacing */}
+            <div className='flex flex-col gap-1'>
+              <div className='flex items-center justify-between'>
+                <span className='text-[10px] font-medium text-muted-foreground'>
+                  {t('render.letterSpacingLabel')}
+                </span>
+                <span className='text-[10px] tabular-nums text-muted-foreground'>
+                  {(selectedStyle?.letterSpacing ?? 0.0).toFixed(1)}
+                </span>
+              </div>
+              <Slider
+                value={[selectedStyle?.letterSpacing ?? 0.0]}
+                min={-5}
+                max={20}
+                step={0.5}
+                onValueChange={([v]) => applyStyleToSelected({ letterSpacing: v })}
+                className='py-1'
+              />
             </div>
           </div>
         )}

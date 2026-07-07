@@ -231,14 +231,7 @@ impl Renderer {
 
         let layout_source = layout_source_from_input(block, translation);
 
-        let mut style = block.style.clone().unwrap_or_else(|| TextStyle {
-            font_families: Vec::new(),
-            font_size: None,
-            color: [0, 0, 0, 255],
-            effect: None,
-            stroke: None,
-            text_align: None,
-        });
+        let mut style = block.style.clone().unwrap_or_default();
         if style.font_families.is_empty()
             && let Some(font) = document_font
         {
@@ -264,7 +257,9 @@ impl Renderer {
         let mut layout_builder = TextLayout::new(&font, None)
             .with_fallback_fonts(&self.symbol_fallbacks)
             .with_writing_mode(writing_mode)
-            .with_alignment(align);
+            .with_alignment(align)
+            .with_line_height(style.line_height.unwrap_or(1.0))
+            .with_letter_spacing(style.letter_spacing.unwrap_or(0.0));
         if let Some(target_language) = target_language {
             layout_builder = layout_builder.with_hyphenation_language_tag(target_language);
         }

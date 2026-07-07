@@ -3722,6 +3722,22 @@
             ],
             "format": "float"
           },
+          "letterSpacing": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "format": "float",
+            "description": "Extra spacing (in px) added between glyphs. `None` (= 0.0) = none."
+          },
+          "lineHeight": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "format": "float",
+            "description": "Line-height multiplier applied to the font-metric line height.\n`None` (= 1.0) uses the font's natural metrics."
+          },
           "stroke": {
             "oneOf": [
               {

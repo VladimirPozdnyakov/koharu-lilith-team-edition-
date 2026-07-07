@@ -220,6 +220,8 @@
     "effectItalic": "Italic",
     "effectBold": "Bold",
     "effectBorder": "Border",
+    "lineHeightLabel": "Line height",
+    "letterSpacingLabel": "Letter spacing",
     "advanced": "Advanced",
     "presetNone": "(no preset)",
     "presetSave": "Save current style as preset",
