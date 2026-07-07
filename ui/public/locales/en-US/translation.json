@@ -36,6 +36,8 @@
     "view": "View",
     "fitWindow": "Fit Window",
     "originalSize": "Original Size",
+    "toggleNavigator": "Toggle Navigator",
+    "togglePanels": "Toggle Panels",
     "process": "Process",
     "processCurrent": "Process current image",
     "redoInpaintRender": "Redo inpaint and render",

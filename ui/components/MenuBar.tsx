@@ -381,6 +381,27 @@ export function MenuBar() {
             <MenubarItem className="text-[13px]" onSelect={resetCanvasScale}>
               {t("menu.originalSize")}
             </MenubarItem>
+            <MenubarSeparator />
+            <MenubarItem
+              className="text-[13px]"
+              data-testid="menu-view-toggle-navigator"
+              onSelect={() => {
+                const s = useEditorUiStore.getState();
+                s.setShowNavigator(!s.showNavigator);
+              }}
+            >
+              {t("menu.toggleNavigator")}
+            </MenubarItem>
+            <MenubarItem
+              className="text-[13px]"
+              data-testid="menu-view-toggle-panels"
+              onSelect={() => {
+                const s = useEditorUiStore.getState();
+                s.setShowPanels(!s.showPanels);
+              }}
+            >
+              {t("menu.togglePanels")}
+            </MenubarItem>
           </MenubarContent>
         </MenubarMenu>
 

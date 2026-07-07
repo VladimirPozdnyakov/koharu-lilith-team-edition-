@@ -31,6 +31,8 @@
     "view": "Вид",
     "fitWindow": "По размеру окна",
     "originalSize": "Исходный размер",
+    "toggleNavigator": "Панель навигатора",
+    "togglePanels": "Боковые панели",
     "process": "Обработка",
     "processCurrent": "Обработать текущее изображение",
     "redoInpaintRender": "Повторить инпейнтинг и рендер",

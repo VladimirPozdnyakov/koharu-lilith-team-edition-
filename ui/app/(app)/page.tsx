@@ -27,14 +27,17 @@ export default function Page() {
   const hasProject = useScene().scene !== null
   const showNavigator = useEditorUiStore((s) => s.showNavigator)
   const setShowNavigator = useEditorUiStore((s) => s.setShowNavigator)
+  const showPanels = useEditorUiStore((s) => s.showPanels)
+  const setShowPanels = useEditorUiStore((s) => s.setShowPanels)
   const leftPanelRef = useRef<PanelImperativeHandle>(null)
+  const rightPanelRef = useRef<PanelImperativeHandle>(null)
 
   const { defaultLayout, onLayoutChanged } = useDefaultLayout({
     id: LAYOUT_ID,
     panelIds: ['left', 'center', 'right'],
   })
 
-  // Sync store -> panel state
+  // Sync store -> panel state (navigator)
   useEffect(() => {
     const panel = leftPanelRef.current
     if (!panel) return
@@ -45,6 +48,18 @@ export default function Page() {
       panel.collapse()
     }
   }, [showNavigator])
+
+  // Sync store -> panel state (right panels)
+  useEffect(() => {
+    const panel = rightPanelRef.current
+    if (!panel) return
+
+    if (showPanels && panel.isCollapsed()) {
+      panel.expand()
+    } else if (!showPanels && !panel.isCollapsed()) {
+      panel.collapse()
+    }
+  }, [showPanels])
 
   const { data: meta } = useGetMeta({
     query: {
@@ -104,8 +119,28 @@ export default function Page() {
             </div>
           </AppErrorBoundary>
         </Panel>
-        <Separator className='w-px bg-border transition-colors hover:bg-border' />
-        <Panel id='right' defaultSize={280} minSize={280} maxSize={400}>
+        <Separator
+          className={cn(
+            'w-px bg-border transition-colors hover:bg-border',
+            !showPanels && 'hidden',
+          )}
+        />
+        <Panel
+          panelRef={rightPanelRef}
+          id='right'
+          defaultSize={280}
+          minSize={280}
+          maxSize={400}
+          collapsible
+          collapsedSize={0}
+          onResize={(size) => {
+            if (size.asPercentage === 0 && showPanels) {
+              setShowPanels(false)
+            } else if (size.asPercentage > 0 && !showPanels) {
+              setShowPanels(true)
+            }
+          }}
+        >
           <AppErrorBoundary>
             <Panels />
           </AppErrorBoundary>

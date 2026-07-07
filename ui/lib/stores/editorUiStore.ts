@@ -69,6 +69,10 @@ type EditorUiState = {
   showNavigator: boolean
   setShowNavigator: (show: boolean) => void
 
+  // right panels (Render / Text Blocks)
+  showPanels: boolean
+  setShowPanels: (show: boolean) => void
+
   // reading order
   readingOrder: 'rtl' | 'ltr' | 'custom'
   setReadingOrder: (order: 'rtl' | 'ltr' | 'custom') => void
@@ -89,6 +93,7 @@ const initialState = {
   selectedLanguage: undefined as string | undefined,
   error: undefined as { id: number; message: string } | undefined,
   showNavigator: true,
+  showPanels: true,
   readingOrder: 'rtl' as const,
 }
 
@@ -145,6 +150,8 @@ export const useEditorUiStore = create<EditorUiState>((set) => ({
   },
 
   setShowNavigator: (show) => set({ showNavigator: show }),
+
+  setShowPanels: (show) => set({ showPanels: show }),
 
   setReadingOrder: (readingOrder) => set({ readingOrder }),
 }))
