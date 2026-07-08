@@ -20,10 +20,12 @@ import {
   resolvePinchNextScaleRatio,
 } from '@/components/canvas/zoomGestures'
 import { Image } from '@/components/Image'
+import { BookPlusIcon, ClipboardCopyIcon } from 'lucide-react'
 import {
   ContextMenu,
   ContextMenuContent,
   ContextMenuItem,
+  ContextMenuSeparator,
   ContextMenuTrigger,
 } from '@/components/ui/context-menu'
 import { useBlobData } from '@/hooks/useBlobData'
@@ -40,7 +42,9 @@ import { useRenderBrushDrawing } from '@/hooks/useRenderBrushDrawing'
 import type { Node, Transform } from '@/lib/api/schemas'
 import { applyOp } from '@/lib/io/scene'
 import { ops } from '@/lib/ops'
+import { copyToClipboard } from '@/lib/utils'
 import { useEditorUiStore } from '@/lib/stores/editorUiStore'
+import { useGlossariesStore } from '@/lib/stores/glossariesStore'
 import { useSelectionStore } from '@/lib/stores/selectionStore'
 
 const BRUSH_CURSOR = 'none'
@@ -197,6 +201,31 @@ export function Workspace() {
       },
     })
   const { t } = useTranslation()
+
+  // Text node currently targeted by the canvas context menu (for Copy/Glossary).
+  const contextMenuNode =
+    contextMenuNodeId && page?.nodes?.[contextMenuNodeId]
+      ? page.nodes[contextMenuNodeId]
+      : null
+  const contextMenuText =
+    contextMenuNode && 'text' in contextMenuNode.kind
+      ? contextMenuNode.kind.text
+      : null
+
+  const handleAddToGlossary = () => {
+    if (!contextMenuText?.text) return
+    const state = useGlossariesStore.getState()
+    let targetId = state.activeGlossaryIds[0]
+    if (!targetId) {
+      if (state.glossaries.length === 0) {
+        targetId = state.addGlossary(t('glossary.defaultName')).id
+        state.toggleActive(targetId)
+      } else {
+        targetId = state.glossaries[0].id
+      }
+    }
+    useGlossariesStore.getState().addEntry(targetId, contextMenuText.text ?? '', '')
+  }
 
   useGesture(
     {
@@ -400,7 +429,31 @@ export function Workspace() {
                     </div>
                   </div>
                 </ContextMenuTrigger>
-                <ContextMenuContent className='min-w-32'>
+                <ContextMenuContent className='min-w-44'>
+                  <ContextMenuItem
+                    disabled={!contextMenuText?.text}
+                    onSelect={handleAddToGlossary}
+                  >
+                    <BookPlusIcon className='mr-2 size-3.5' />
+                    {t('glossary.addFromBlock')}
+                  </ContextMenuItem>
+                  <ContextMenuItem
+                    disabled={!contextMenuText?.translation}
+                    onSelect={() =>
+                      void copyToClipboard(contextMenuText?.translation ?? '')
+                    }
+                  >
+                    <ClipboardCopyIcon className='mr-2 size-3.5' />
+                    {t('common.copyTranslation')}
+                  </ContextMenuItem>
+                  <ContextMenuSeparator />
+                  <ContextMenuItem
+                    disabled={contextMenuNodeId === null}
+                    onSelect={() => useEditorUiStore.getState().setFindReplaceOpen(true)}
+                  >
+                    {t('menu.findReplace')}
+                  </ContextMenuItem>
+                  <ContextMenuSeparator />
                   <ContextMenuItem
                     disabled={contextMenuNodeId === null}
                     onSelect={handleDeleteBlock}

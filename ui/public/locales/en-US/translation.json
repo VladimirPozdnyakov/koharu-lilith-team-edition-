@@ -4,6 +4,7 @@
     "cancel": "Cancel",
     "confirm": "Confirm",
     "copy": "Copy",
+    "copyTranslation": "Copy translation",
     "copied": "Copied",
     "save": "Save",
     "saved": "Saved!",
@@ -100,6 +101,7 @@
   },
   "navigator": {
     "title": "Navigator",
+    "deletePage": "Delete page",
     "show": "Show Navigator",
     "hide": "Hide Navigator",
     "pages_one": "{{count}} page",

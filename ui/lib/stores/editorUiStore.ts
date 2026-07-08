@@ -73,6 +73,10 @@ type EditorUiState = {
   showPanels: boolean
   setShowPanels: (show: boolean) => void
 
+  // find & replace dialog open state (global, triggered from context menus too)
+  findReplaceOpen: boolean
+  setFindReplaceOpen: (open: boolean) => void
+
   // reading order
   readingOrder: 'rtl' | 'ltr' | 'custom'
   setReadingOrder: (order: 'rtl' | 'ltr' | 'custom') => void
@@ -94,6 +98,7 @@ const initialState = {
   error: undefined as { id: number; message: string } | undefined,
   showNavigator: true,
   showPanels: true,
+  findReplaceOpen: false,
   readingOrder: 'rtl' as const,
 }
 
@@ -152,6 +157,8 @@ export const useEditorUiStore = create<EditorUiState>((set) => ({
   setShowNavigator: (show) => set({ showNavigator: show }),
 
   setShowPanels: (show) => set({ showPanels: show }),
+
+  setFindReplaceOpen: (open) => set({ findReplaceOpen: open }),
 
   setReadingOrder: (readingOrder) => set({ readingOrder }),
 }))

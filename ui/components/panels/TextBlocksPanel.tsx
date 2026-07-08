@@ -1,6 +1,6 @@
 'use client'
 
-import { BookPlusIcon, Languages, LoaderCircleIcon, PlusIcon, Trash2Icon } from 'lucide-react'
+import { BookPlusIcon, ClipboardCopyIcon, Languages, LoaderCircleIcon, PlusIcon, Trash2Icon } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -12,6 +12,13 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { Button } from '@/components/ui/button'
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from '@/components/ui/context-menu'
 import { DraftTextarea } from '@/components/ui/draft-textarea'
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -30,6 +37,7 @@ import { fetchApi } from '@/lib/api/fetch'
 import type { TextDataPatch } from '@/lib/api/schemas'
 import { applyOp, invalidateScene, queueAutoRender, reorderPageTextNodes } from '@/lib/io/scene'
 import { ops } from '@/lib/ops'
+import { copyToClipboard } from '@/lib/utils'
 import { useEditorUiStore } from '@/lib/stores/editorUiStore'
 import { useGlossariesStore } from '@/lib/stores/glossariesStore'
 import { useJobsStore } from '@/lib/stores/jobsStore'
@@ -368,13 +376,15 @@ function BlockCard({
   }
 
   return (
-    <motion.div
-      data-testid={`textblock-card-${index}`}
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.2, delay: index * 0.03 }}
-    >
-      <AccordionItem
+    <ContextMenu>
+      <ContextMenuTrigger asChild>
+        <motion.div
+          data-testid={`textblock-card-${index}`}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.2, delay: index * 0.03 }}
+        >
+          <AccordionItem
         value={index.toString()}
         data-selected={selected}
         className='overflow-hidden rounded-md bg-card/90 text-xs ring-1 ring-border data-[selected=true]:ring-primary'
@@ -544,7 +554,37 @@ function BlockCard({
             </div>
           </div>
         </AccordionContent>
-      </AccordionItem>
-    </motion.div>
+          </AccordionItem>
+        </motion.div>
+      </ContextMenuTrigger>
+      <ContextMenuContent className='min-w-44'>
+        <ContextMenuItem
+          disabled={!llmReady || processing}
+          onSelect={() => onGenerate()}
+        >
+          <Languages className='mr-2 size-3.5' />
+          {t('llm.generateTooltip')}
+        </ContextMenuItem>
+        <ContextMenuItem
+          disabled={!hasOcr}
+          onSelect={() => onAddToGlossary?.(data.text ?? '')}
+        >
+          <BookPlusIcon className='mr-2 size-3.5' />
+          {t('glossary.addFromBlock')}
+        </ContextMenuItem>
+        <ContextMenuItem
+          disabled={!hasTranslation}
+          onSelect={() => void copyToClipboard(data.translation ?? '')}
+        >
+          <ClipboardCopyIcon className='mr-2 size-3.5' />
+          {t('common.copyTranslation')}
+        </ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuItem variant='destructive' onSelect={onDelete}>
+          <Trash2Icon className='mr-2 size-3.5' />
+          {t('workspace.deleteBlock')}
+        </ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
   )
 }

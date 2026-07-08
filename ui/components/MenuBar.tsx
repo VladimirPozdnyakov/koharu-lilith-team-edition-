@@ -78,8 +78,9 @@ export function MenuBar() {
   const { t } = useTranslation();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [settingsTab, setSettingsTab] = useState<TabId>("appearance");
-  const [findReplaceOpen, setFindReplaceOpen] = useState(false);
   const [glossaryOpen, setGlossaryOpen] = useState(false);
+  const findReplaceOpen = useEditorUiStore((s) => s.findReplaceOpen);
+  const setFindReplaceOpen = useEditorUiStore((s) => s.setFindReplaceOpen);
   const hasPage = useSelectionStore((s) => s.pageId !== null);
   const hasScene = useScene().scene !== null;
   const shortcuts = usePreferencesStore((state) => state.shortcuts);

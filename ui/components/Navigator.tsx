@@ -1,14 +1,22 @@
 'use client'
 
 import { useVirtualizer } from '@tanstack/react-virtual'
-import { LayoutGridIcon, Trash2Icon } from 'lucide-react'
+import { DownloadIcon, LayoutGridIcon, Trash2Icon } from 'lucide-react'
 import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import type React from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { PageManagerDialog } from '@/components/PageManagerDialog'
 import { Button } from '@/components/ui/button'
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from '@/components/ui/context-menu'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { exportCurrentProjectAs, exportCurrentProjectAsText } from '@/lib/io/pagesIo'
 import { useScene } from '@/hooks/useScene'
 import { getGetPageThumbnailUrl } from '@/lib/api/default/default'
 import { applyOp } from '@/lib/io/scene'
@@ -240,25 +248,27 @@ const PagePreview = memo(function PagePreview({
   const { t } = useTranslation()
 
   return (
-    <div
-      role='button'
-      tabIndex={0}
-      onClick={(e) => onSelect(pageId, e)}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          onSelect(pageId, e)
-        } else if (e.key === 'Delete') {
-          e.preventDefault()
-          onBatchDelete()
-        }
-      }}
-      data-testid={`navigator-page-${index}`}
-      data-page-index={index}
-      data-selected={selected}
-      data-active={active}
-      className='group relative flex h-full w-full cursor-pointer flex-col gap-0.5 rounded border border-transparent bg-card p-1.5 text-left shadow-sm transition select-none hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden data-[active=true]:border-primary data-[selected=true]:bg-accent/60'
-    >
+    <ContextMenu>
+      <ContextMenuTrigger asChild>
+        <div
+          role='button'
+          tabIndex={0}
+          onClick={(e) => onSelect(pageId, e)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              onSelect(pageId, e)
+            } else if (e.key === 'Delete') {
+              e.preventDefault()
+              onBatchDelete()
+            }
+          }}
+          data-testid={`navigator-page-${index}`}
+          data-page-index={index}
+          data-selected={selected}
+          data-active={active}
+          className='group relative flex h-full w-full cursor-pointer flex-col gap-0.5 rounded border border-transparent bg-card p-1.5 text-left shadow-sm transition select-none hover:bg-accent/40 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-hidden data-[active=true]:border-primary data-[selected=true]:bg-accent/60'
+        >
       <div className='relative flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded bg-muted/20'>
         {src ? (
           <img
@@ -288,9 +298,34 @@ const PagePreview = memo(function PagePreview({
           </Button>
         )}
       </div>
-      <div className='flex shrink-0 items-center text-xs text-muted-foreground'>
-        <div className='mx-auto font-semibold text-foreground'>{index + 1}</div>
+        <div className='flex shrink-0 items-center text-xs text-muted-foreground'>
+          <div className='mx-auto font-semibold text-foreground'>{index + 1}</div>
+        </div>
       </div>
-    </div>
+      </ContextMenuTrigger>
+      <ContextMenuContent className='min-w-44'>
+        <ContextMenuItem
+          onSelect={() => void exportCurrentProjectAs('rendered', [pageId])}
+        >
+          <DownloadIcon className='mr-2 size-3.5' />
+          {t('menu.export')}
+        </ContextMenuItem>
+        <ContextMenuItem
+          onSelect={() => void exportCurrentProjectAsText([pageId])}
+        >
+          <DownloadIcon className='mr-2 size-3.5' />
+          {t('menu.exportText')}
+        </ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuItem
+          variant='destructive'
+          disabled={!canDelete}
+          onSelect={() => onDelete(pageId)}
+        >
+          <Trash2Icon className='mr-2 size-3.5' />
+          {t('navigator.deletePage')}
+        </ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
   )
 })
