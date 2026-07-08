@@ -1,6 +1,6 @@
 'use client'
 
-import { BookPlusIcon, ClipboardCopyIcon, Languages, LoaderCircleIcon, PlusIcon, Trash2Icon } from 'lucide-react'
+import { BookPlusIcon, ClipboardCopyIcon, Languages, ListIcon, LoaderCircleIcon, PlusIcon, Trash2Icon } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -31,7 +31,7 @@ import {
 } from '@/components/ui/select'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useCurrentPage, useTextNodes, type TextNodeEntry } from '@/hooks/useCurrentPage'
-import { getConfig, startPipeline, useGetCurrentLlm } from '@/lib/api/default/default'
+import { getConfig, lookupVariants, selectVariant, startPipeline, useGetCurrentLlm } from '@/lib/api/default/default'
 import { collectActiveEntries, findTermRanges, getGlossaryForPrompt } from '@/lib/glossary-utils'
 import { fetchApi } from '@/lib/api/fetch'
 import type { TextDataPatch } from '@/lib/api/schemas'
@@ -363,6 +363,47 @@ function BlockCard({
   const ocrRef = useRef<HTMLTextAreaElement | null>(null)
   const [addingTerm, setAddingTerm] = useState(false)
   const [termTarget, setTermTarget] = useState('')
+  const [variants, setVariants] = useState<{ translation: string; providerId?: string | null; modelId: string; createdAt: number; lastUsedAt: number }[] | null>(null)
+
+  const handleShowVariants = async () => {
+    const source = (data.text ?? '').trim()
+    if (!source) return
+    const editor = useEditorUiStore.getState()
+    const prefs = usePreferencesStore.getState()
+    try {
+      const res = await lookupVariants({
+        source,
+        targetLanguage: editor.selectedLanguage ?? undefined,
+        systemPrompt: prefs.customSystemPrompt ?? undefined,
+        glossary: getGlossaryForPrompt() ?? undefined,
+      })
+      setVariants(res.variants ?? [])
+    } catch {
+      setVariants([])
+    }
+  }
+
+  const handlePickVariant = async (translation: string, providerId: string | null | undefined, modelId: string) => {
+    onPatch({ translation })
+    setVariants(null)
+    const source = (data.text ?? '').trim()
+    if (!source) return
+    const editor = useEditorUiStore.getState()
+    const prefs = usePreferencesStore.getState()
+    try {
+      await selectVariant({
+        source,
+        targetLanguage: editor.selectedLanguage ?? undefined,
+        providerId: providerId ?? undefined,
+        modelId,
+        translation,
+        systemPrompt: prefs.customSystemPrompt ?? undefined,
+        glossary: getGlossaryForPrompt() ?? undefined,
+      })
+    } catch {
+      // non-critical
+    }
+  }
 
   const handleAddTerm = () => {
     if (!ocrRef.current) return
@@ -551,6 +592,41 @@ function BlockCard({
                 autocompleteTerms={autocompleteTerms}
                 className='min-h-0 resize-none px-1.5 py-1 text-xs'
               />
+              {variants && (
+                <div className='mt-1 space-y-0.5 rounded-md border border-border bg-card p-1'>
+                  <div className='flex items-center justify-between px-1 py-0.5'>
+                    <span className='text-[10px] font-medium text-muted-foreground'>
+                      {t('translationVariants.title')}
+                    </span>
+                    <button
+                      type='button'
+                      onClick={() => setVariants(null)}
+                      className='text-[10px] text-muted-foreground hover:text-foreground'
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  {variants.length === 0 ? (
+                    <p className='px-1 py-1 text-[10px] text-muted-foreground'>
+                      {t('translationVariants.empty')}
+                    </p>
+                  ) : (
+                    variants.map((v, vi) => (
+                      <button
+                        key={vi}
+                        type='button'
+                        onClick={() => void handlePickVariant(v.translation, v.providerId, v.modelId)}
+                        className='block w-full truncate rounded px-1.5 py-1 text-left text-[11px] hover:bg-accent'
+                      >
+                        {v.translation}
+                        <span className='ml-1 text-[9px] text-muted-foreground'>
+                          {v.providerId ?? 'local'} · {v.modelId}
+                        </span>
+                      </button>
+                    ))
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </AccordionContent>
@@ -578,6 +654,13 @@ function BlockCard({
         >
           <ClipboardCopyIcon className='mr-2 size-3.5' />
           {t('common.copyTranslation')}
+        </ContextMenuItem>
+        <ContextMenuItem
+          disabled={!hasOcr}
+          onSelect={() => void handleShowVariants()}
+        >
+          <ListIcon className='mr-2 size-3.5' />
+          {t('translationVariants.title')}
         </ContextMenuItem>
         <ContextMenuSeparator />
         <ContextMenuItem variant='destructive' onSelect={onDelete}>

@@ -25,6 +25,9 @@ import type {
   AddImageLayerResponse,
   AppConfig,
   AppEvent,
+  CacheLookupRequest,
+  CacheLookupResponse,
+  CacheSelectRequest,
   ConfigPatch,
   CreatePagesFromPathsRequest,
   CreatePagesResponse,
@@ -3118,3 +3121,131 @@ export function useGetSceneJson<TData = Awaited<ReturnType<typeof getSceneJson>>
 
 
 
+export const getLookupVariantsUrl = () => {
+
+
+
+
+  return `/api/v1/translation-cache/lookup`
+}
+
+export const lookupVariants = async (cacheLookupRequest: CacheLookupRequest, options?: RequestInit): Promise<CacheLookupResponse> => {
+
+  return fetchApi<CacheLookupResponse>(getLookupVariantsUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(cacheLookupRequest)
+  }
+);}
+
+
+
+
+
+export const getLookupVariantsMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof lookupVariants>>, TError,{data: CacheLookupRequest}, TContext>, request?: SecondParameter<typeof fetchApi>}
+): UseMutationOptions<Awaited<ReturnType<typeof lookupVariants>>, TError,{data: CacheLookupRequest}, TContext> => {
+
+const mutationKey = ['lookupVariants'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof lookupVariants>>, {data: CacheLookupRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  lookupVariants(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type LookupVariantsMutationResult = NonNullable<Awaited<ReturnType<typeof lookupVariants>>>
+    export type LookupVariantsMutationBody = CacheLookupRequest
+    export type LookupVariantsMutationError = unknown
+
+    export const useLookupVariants = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof lookupVariants>>, TError,{data: CacheLookupRequest}, TContext>, request?: SecondParameter<typeof fetchApi>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof lookupVariants>>,
+        TError,
+        {data: CacheLookupRequest},
+        TContext
+      > => {
+      return useMutation(getLookupVariantsMutationOptions(options), queryClient);
+    }
+    export const getSelectVariantUrl = () => {
+
+
+
+
+  return `/api/v1/translation-cache/select`
+}
+
+export const selectVariant = async (cacheSelectRequest: CacheSelectRequest, options?: RequestInit): Promise<void> => {
+
+  return fetchApi<void>(getSelectVariantUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(cacheSelectRequest)
+  }
+);}
+
+
+
+
+
+export const getSelectVariantMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof selectVariant>>, TError,{data: CacheSelectRequest}, TContext>, request?: SecondParameter<typeof fetchApi>}
+): UseMutationOptions<Awaited<ReturnType<typeof selectVariant>>, TError,{data: CacheSelectRequest}, TContext> => {
+
+const mutationKey = ['selectVariant'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof selectVariant>>, {data: CacheSelectRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  selectVariant(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SelectVariantMutationResult = NonNullable<Awaited<ReturnType<typeof selectVariant>>>
+    export type SelectVariantMutationBody = CacheSelectRequest
+    export type SelectVariantMutationError = unknown
+
+    export const useSelectVariant = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof selectVariant>>, TError,{data: CacheSelectRequest}, TContext>, request?: SecondParameter<typeof fetchApi>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof selectVariant>>,
+        TError,
+        {data: CacheSelectRequest},
+        TContext
+      > => {
+      return useMutation(getSelectVariantMutationOptions(options), queryClient);
+    }

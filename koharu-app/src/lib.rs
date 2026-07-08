@@ -16,6 +16,7 @@ pub mod pipeline;
 pub mod projects;
 pub mod renderer;
 pub mod session;
+pub mod translation_cache;
 pub mod utils;
 
 pub use app::{App, AppSharedState};
@@ -25,3 +26,4 @@ pub use pipeline::{
     Artifact, Engine, EngineCtx, EngineInfo, PipelineRunOptions, PipelineSpec, Registry, Scope,
 };
 pub use session::ProjectSession;
+pub use translation_cache::TranslationCache;

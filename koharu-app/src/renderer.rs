@@ -1071,6 +1071,8 @@ mod tests {
             effect: None,
             stroke: None,
             text_align: None,
+            line_height: None,
+            letter_spacing: None,
         };
         let prediction = FontPrediction {
             text_color: [12, 34, 56],
@@ -1091,6 +1093,8 @@ mod tests {
             effect: None,
             stroke: None,
             text_align: None,
+            line_height: None,
+            letter_spacing: None,
         };
         let prediction = FontPrediction {
             text_color: [12, 34, 56],

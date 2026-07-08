@@ -267,6 +267,10 @@
     "replacing": "Замена...",
     "batchLabel": "Найти и заменить"
   },
+  "translationVariants": {
+    "title": "Варианты перевода",
+    "empty": "Нет сохранённых вариантов."
+  },
   "glossary": {
     "title": "Глоссарии",
     "newGlossary": "Новый глоссарий",

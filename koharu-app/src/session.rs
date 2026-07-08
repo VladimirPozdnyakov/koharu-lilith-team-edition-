@@ -297,6 +297,8 @@ mod tests {
                             }),
                             stroke: None,
                             text_align: None,
+                            line_height: None,
+                            letter_spacing: None,
                         }),
                         ..Default::default()
                     }),

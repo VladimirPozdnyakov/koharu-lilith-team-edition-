@@ -281,6 +281,10 @@
     "replacing": "Replacing...",
     "batchLabel": "Find & Replace"
   },
+  "translationVariants": {
+    "title": "Translation variants",
+    "empty": "No cached variants yet."
+  },
   "glossary": {
     "title": "Glossaries",
     "newGlossary": "New glossary",

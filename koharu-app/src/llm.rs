@@ -25,6 +25,8 @@ use koharu_llm::providers::{
 use koharu_llm::safe::llama_backend::LlamaBackend;
 use koharu_llm::{Language, Llm, ModelId, language::tags as language_tags};
 use koharu_runtime::RuntimeManager;
+
+use crate::translation_cache::{CachedVariant, TranslationCache};
 use strum::IntoEnumIterator;
 use tokio::sync::{RwLock, broadcast};
 
@@ -107,6 +109,7 @@ pub struct Model {
     runtime: RuntimeManager,
     cpu: bool,
     backend: Arc<LlamaBackend>,
+    cache: Option<Arc<TranslationCache>>,
 }
 
 impl Model {
@@ -117,7 +120,16 @@ impl Model {
             runtime,
             cpu,
             backend,
+            cache: None,
         }
+    }
+
+    /// Attach a translation cache. Translations are stored per source-text +
+    /// language + provider + model + prompt + glossary hash; cache hits skip
+    /// the LLM call entirely.
+    pub fn with_cache(mut self, cache: Arc<TranslationCache>) -> Self {
+        self.cache = Some(cache);
+        self
     }
 
     pub fn is_cpu(&self) -> bool {
@@ -201,6 +213,11 @@ impl Model {
     /// `[N]...` block; the response is parsed back into per-block
     /// translations. Output length matches input length (possibly with empty
     /// strings for missing blocks).
+    ///
+    /// If a translation cache is attached, source texts that have been
+    /// translated before (same language + provider + model + prompt + glossary)
+    /// are served from the cache without calling the LLM. Only uncached sources
+    /// are sent to the model; the results are stored back into the cache.
     pub async fn translate_texts(
         &self,
         sources: &[String],
@@ -214,39 +231,131 @@ impl Model {
         let target_language = target_language
             .and_then(Language::parse)
             .unwrap_or(Language::English);
+
+        // --- Cache lookup (partial hit) -------------------------------------
+        // Resolve the target info needed for the cache key. Uses a read lock
+        // so cache hits never block other readers.
+        let target_info: Option<(Option<String>, String)> = {
+            let guard = self.state.read().await;
+            state_target(&guard).map(|t| (t.provider_id, t.model_id))
+        };
+
+        if let Some(cache) = &self.cache
+            && let Some((provider_id, model_id)) = &target_info
+        {
+            let lang_tag = target_language.tag();
+            // Compute keys and partition into hits / misses.
+            let mut result: Vec<Option<String>> = vec![None; sources.len()];
+            let mut miss_indices: Vec<usize> = Vec::new();
+            let mut miss_keys: Vec<String> = Vec::new();
+            for (i, src) in sources.iter().enumerate() {
+                let key = TranslationCache::key(
+                    src,
+                    lang_tag,
+                    provider_id.as_deref(),
+                    model_id,
+                    custom_system_prompt,
+                    glossary,
+                );
+                if let Some(variant) = cache.get(&key) {
+                    result[i] = Some(variant.translation);
+                } else {
+                    miss_indices.push(i);
+                    miss_keys.push(key);
+                }
+            }
+
+            if miss_indices.is_empty() {
+                // Full hit — no LLM call.
+                return Ok(result.into_iter().map(|v| v.unwrap_or_default()).collect());
+            }
+
+            // Partial hit — translate only the misses.
+            let miss_sources: Vec<String> = miss_indices.iter().map(|&i| sources[i].clone()).collect();
+            let translated = self
+                .translate_uncached(&miss_sources, target_language, custom_system_prompt, glossary)
+                .await?;
+
+            // Store new variants + interleave into result.
+            let now = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .map(|d| d.as_secs() as i64)
+                .unwrap_or(0);
+            for (offset, &src_idx) in miss_indices.iter().enumerate() {
+                let translation = translated.get(offset).cloned().unwrap_or_default();
+                if !translation.trim().is_empty() {
+                    let _ = cache.put(
+                        &miss_keys[offset],
+                        CachedVariant {
+                            translation: translation.clone(),
+                            provider_id: provider_id.clone(),
+                            model_id: model_id.clone(),
+                            created_at: now,
+                            last_used_at: now,
+                        },
+                    );
+                }
+                result[src_idx] = Some(translation);
+            }
+            return Ok(result.into_iter().map(|v| v.unwrap_or_default()).collect());
+        }
+
+        // No cache or no target info — translate everything the old way.
         let body = format_sources(sources);
-
-        let mut guard = self.state.write().await;
-        let translation = match &mut *guard {
-            State::ReadyLocal(llm) => {
-                let opts = llm.id().default_generate_options();
-                llm.generate(&body, &opts, target_language, custom_system_prompt, glossary)
-            }
-            State::ReadyProvider { target, provider } => {
-                provider
-                    .translate(
-                        &body,
-                        target_language,
-                        &target.model_id,
-                        custom_system_prompt,
-                        glossary,
-                    )
-                    .await
-            }
-            State::Loading { .. } => Err(anyhow::anyhow!("LLM is still loading")),
-            State::Failed { error, .. } => Err(anyhow::anyhow!("LLM failed to load: {error}")),
-            State::Empty => Err(anyhow::anyhow!("no LLM loaded")),
-        }?;
-
+        let translation = self
+            .translate_body(&body, target_language, custom_system_prompt, glossary)
+            .await?;
         let translation = strip_thinking_block(&translation);
         let out = match parse_tagged_blocks(translation, sources.len())? {
             Some(blocks) => blocks,
             None => split_legacy_lines(translation, sources.len()),
         };
-        Ok(out
-            .into_iter()
-            .map(|s| strip_wrapping_quotes(s.trim()))
-            .collect())
+        Ok(out.into_iter().map(|s| strip_wrapping_quotes(s.trim())).collect())
+    }
+
+    /// Translate a sub-batch of sources (no cache). Returns per-source strings.
+    async fn translate_uncached(
+        &self,
+        sources: &[String],
+        target_language: Language,
+        custom_system_prompt: Option<&str>,
+        glossary: Option<&str>,
+    ) -> Result<Vec<String>> {
+        let body = format_sources(sources);
+        let translation = self
+            .translate_body(&body, target_language, custom_system_prompt, glossary)
+            .await?;
+        let translation = strip_thinking_block(&translation);
+        let out = match parse_tagged_blocks(translation, sources.len())? {
+            Some(blocks) => blocks,
+            None => split_legacy_lines(translation, sources.len()),
+        };
+        Ok(out.into_iter().map(|s| strip_wrapping_quotes(s.trim())).collect())
+    }
+
+    /// Send the formatted body to the LLM/provider and return the raw response.
+    async fn translate_body(
+        &self,
+        body: &str,
+        target_language: Language,
+        custom_system_prompt: Option<&str>,
+        glossary: Option<&str>,
+    ) -> Result<String> {
+        let mut guard = self.state.write().await;
+        match &mut *guard {
+            State::ReadyLocal(llm) => {
+                let opts = llm.id().default_generate_options();
+                llm.generate(body, &opts, target_language, custom_system_prompt, glossary)
+            }
+            State::ReadyProvider { target, provider } => {
+                provider
+                    .translate(body, target_language, &target.model_id, custom_system_prompt, glossary)
+                    .await
+            }
+            State::Loading { .. } => Err(anyhow::anyhow!("LLM is still loading")),
+            State::Failed { error, .. } => Err(anyhow::anyhow!("LLM failed to load: {error}")),
+            State::Empty => Err(anyhow::anyhow!("no LLM loaded")),
+        }
     }
 }
 

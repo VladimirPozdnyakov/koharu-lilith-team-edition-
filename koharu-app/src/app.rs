@@ -30,6 +30,7 @@ use crate::llm;
 use crate::pipeline::Registry;
 use crate::renderer;
 use crate::session::ProjectSession;
+use crate::translation_cache::TranslationCache;
 
 /// Ring-buffer capacity for the event bus. Reconnecting clients can replay
 /// up to this many trailing events via `Last-Event-ID`. Sized to comfortably
@@ -63,6 +64,7 @@ pub struct App {
     pub downloads: Arc<DashMap<String, DownloadProgress>>,
     pub bus: Arc<EventBus>,
     pub llm: Arc<llm::Model>,
+    pub translation_cache: Arc<TranslationCache>,
     pub renderer: Arc<renderer::Renderer>,
     /// Autosave handle (tx + join) for the currently-open session. `None` = no project open.
     autosave: Mutex<Option<autosave::AutosaveHandle>>,
@@ -91,7 +93,13 @@ impl App {
         version: &'static str,
     ) -> Result<Self> {
         let backend = shared_llama_backend(&runtime)?;
-        let llm = Arc::new(llm::Model::new((*runtime).clone(), cpu, backend));
+        let translation_cache = Arc::new(TranslationCache::open(
+            config.data.path.as_std_path().join("translation-cache"),
+        )?);
+        let llm = Arc::new(
+            llm::Model::new((*runtime).clone(), cpu, backend)
+                .with_cache(Arc::clone(&translation_cache)),
+        );
         let renderer = Arc::new(renderer::Renderer::new()?);
         Ok(Self {
             config: Arc::new(ArcSwap::from_pointee(config)),
@@ -102,6 +110,7 @@ impl App {
             downloads: shared.downloads,
             bus: shared.bus,
             llm,
+            translation_cache,
             renderer,
             autosave: Mutex::new(None),
             version,

@@ -917,6 +917,53 @@
           }
         }
       }
+    },
+    "/translation-cache/lookup": {
+      "post": {
+        "operationId": "lookup_variants",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CacheLookupRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CacheLookupResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/translation-cache/select": {
+      "post": {
+        "operationId": "select_variant",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CacheSelectRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1193,6 +1240,136 @@
       "BlobRef": {
         "type": "string",
         "description": "Hex-encoded blake3 hash of an immutable blob."
+      },
+      "CacheLookupRequest": {
+        "type": "object",
+        "required": [
+          "source"
+        ],
+        "properties": {
+          "glossary": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "modelId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "providerId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "If `None`, returns variants across ALL providers/models (for the UI\n\"show all variants\" feature). If set, only returns matching ones."
+          },
+          "source": {
+            "type": "string"
+          },
+          "systemPrompt": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "targetLanguage": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      },
+      "CacheLookupResponse": {
+        "type": "object",
+        "required": [
+          "variants"
+        ],
+        "properties": {
+          "variants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CacheVariantDto"
+            }
+          }
+        }
+      },
+      "CacheSelectRequest": {
+        "type": "object",
+        "required": [
+          "source",
+          "modelId",
+          "translation"
+        ],
+        "properties": {
+          "glossary": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "modelId": {
+            "type": "string"
+          },
+          "providerId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source": {
+            "type": "string"
+          },
+          "systemPrompt": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "targetLanguage": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "translation": {
+            "type": "string"
+          }
+        }
+      },
+      "CacheVariantDto": {
+        "type": "object",
+        "required": [
+          "translation",
+          "modelId",
+          "createdAt",
+          "lastUsedAt"
+        ],
+        "properties": {
+          "createdAt": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "lastUsedAt": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "modelId": {
+            "type": "string"
+          },
+          "providerId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "translation": {
+            "type": "string"
+          }
+        }
       },
       "ConfigPatch": {
         "type": "object",
