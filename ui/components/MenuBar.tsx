@@ -83,6 +83,9 @@ export function MenuBar() {
   const setFindReplaceOpen = useEditorUiStore((s) => s.setFindReplaceOpen);
   const hasPage = useSelectionStore((s) => s.pageId !== null);
   const hasScene = useScene().scene !== null;
+  const hasSelectedPages = useSelectionStore(
+    (s) => s.selectedPageIds.size > 0,
+  );
   const shortcuts = usePreferencesStore((state) => state.shortcuts);
   const customPipeline = usePreferencesStore((state) => state.customPipeline);
   const setCustomPipeline = usePreferencesStore(
@@ -100,7 +103,7 @@ export function MenuBar() {
     return id;
   };
 
-  const runPipeline = async (opts: { pageId?: string }) => {
+  const runPipeline = async (opts: { pageId?: string; pageIds?: string[] }) => {
     const cfg = await getConfig();
     if (!cfg.pipeline) return;
     const p = cfg.pipeline;
@@ -118,7 +121,7 @@ export function MenuBar() {
     const prefs = usePreferencesStore.getState();
     await startPipeline({
       steps,
-      pages: opts.pageId ? [opts.pageId] : undefined,
+      pages: opts.pageId ? [opts.pageId] : opts.pageIds,
       targetLanguage: editor.selectedLanguage,
       systemPrompt: prefs.customSystemPrompt,
       glossary: getGlossaryForPrompt(),
@@ -134,7 +137,7 @@ export function MenuBar() {
     await startPipeline({ steps: [cfg.pipeline.inpainter], pages: [pageId] });
   };
 
-  const runCustomPipeline = async (opts: { pageId?: string }) => {
+  const runCustomPipeline = async (opts: { pageId?: string; pageIds?: string[] }) => {
     const cfg = await getConfig();
     if (!cfg.pipeline) return;
     const p = cfg.pipeline;
@@ -151,7 +154,7 @@ export function MenuBar() {
     const editor = useEditorUiStore.getState();
     await startPipeline({
       steps,
-      pages: opts.pageId ? [opts.pageId] : undefined,
+      pages: opts.pageId ? [opts.pageId] : opts.pageIds,
       targetLanguage: editor.selectedLanguage,
       systemPrompt: prefs.customSystemPrompt,
       glossary: getGlossaryForPrompt(),
@@ -442,6 +445,19 @@ export function MenuBar() {
               onSelect={() => void runPipeline({})}
             >
               {t("menu.processAll")}
+            </MenubarItem>
+            <MenubarItem
+              data-testid="menu-process-selected"
+              className="text-[13px]"
+              disabled={!hasSelectedPages}
+              onSelect={() => {
+                const ids = Array.from(
+                  useSelectionStore.getState().selectedPageIds,
+                );
+                if (ids.length > 0) void runPipeline({ pageIds: ids });
+              }}
+            >
+              {t("menu.processSelected")}
             </MenubarItem>
             <MenubarSeparator />
             <MenubarItem

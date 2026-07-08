@@ -40,6 +40,7 @@
     "processCurrent": "Обработать текущее изображение",
     "redoInpaintRender": "Повторить инпейнтинг и рендер",
     "processAll": "Обработать все изображения",
+    "processSelected": "Обработать выбранные страницы",
     "help": "Справка",
     "settings": "Настройки",
     "discord": "Discord",

@@ -43,6 +43,7 @@
     "processCurrent": "Process current image",
     "redoInpaintRender": "Redo inpaint and render",
     "processAll": "Process all images",
+    "processSelected": "Process selected pages",
     "help": "Help",
     "settings": "Settings",
     "discord": "Discord",
