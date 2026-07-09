@@ -21,6 +21,7 @@ import { Progress } from '@/components/ui/progress'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import { isTauri, openExternalUrl } from '@/lib/backend'
+import { usePreferencesStore } from '@/lib/stores/preferencesStore'
 
 export type UpdaterStatus = 'idle' | 'loading' | 'latest' | 'outdated' | 'error'
 
@@ -135,15 +136,18 @@ export function UpdaterProvider({ children }: { children: ReactNode }) {
     [update, isInstalling],
   )
 
+  const autoCheckUpdates = usePreferencesStore((s) => s.autoCheckUpdates)
+
   useEffect(() => {
+    if (!autoCheckUpdates) return
     void checkForUpdates(true)
-  }, [checkForUpdates])
+  }, [checkForUpdates, autoCheckUpdates])
 
   // Stable wrappers so `updater.checkForUpdates` / `updater.installUpdate`
   // keep the same identity across provider re-renders. Without this,
   // `setStatus` -> provider re-render -> new arrow wrappers -> consumer
   // useEffects that depend on them re-fire in a loop.
-  const checkForUpdatesPublic = useCallback(() => checkForUpdates(false), [checkForUpdates])
+  const checkForUpdatesPublic = useCallback(() => checkForUpdates(true), [checkForUpdates])
   const installUpdatePublic = useCallback(() => installUpdate(), [installUpdate])
 
   const contextValue = useMemo<UpdaterContextValue>(

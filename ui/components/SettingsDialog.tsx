@@ -17,6 +17,7 @@ import {
   SaveIcon,
   RotateCcwIcon,
   AlertTriangleIcon,
+  RefreshCwIcon,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import {
@@ -54,6 +55,7 @@ import { Input } from "@/components/ui/input";
 import { Kbd } from "@/components/ui/kbd";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -455,6 +457,7 @@ export function SettingsDialog({
                   status={updater.status}
                   isInstallingUpdate={updater.isInstalling}
                   onInstallUpdate={() => void updater.installUpdate()}
+                  onCheckForUpdates={() => void updater.checkForUpdates()}
                 />
               )}
             </div>
@@ -1169,14 +1172,18 @@ function AboutPane({
   status,
   isInstallingUpdate,
   onInstallUpdate,
+  onCheckForUpdates,
 }: {
   version?: string;
   latestVersion?: string;
   status: UpdaterStatus;
   isInstallingUpdate: boolean;
   onInstallUpdate: () => void;
+  onCheckForUpdates: () => void;
 }) {
   const { t } = useTranslation();
+  const autoCheckUpdates = usePreferencesStore((s) => s.autoCheckUpdates);
+  const setAutoCheckUpdates = usePreferencesStore((s) => s.setAutoCheckUpdates);
 
   return (
     <div className="flex h-full flex-col items-center justify-center gap-5 py-8">
@@ -1228,6 +1235,24 @@ function AboutPane({
                 </Button>
               )}
             </div>
+          </InfoRow>
+          <InfoRow label={t("settings.aboutAutoCheck")}>
+            <Switch
+              checked={autoCheckUpdates}
+              onCheckedChange={setAutoCheckUpdates}
+            />
+          </InfoRow>
+          <InfoRow label={t("settings.aboutCheckNow")}>
+            <Button
+              variant="outline"
+              size="xs"
+              disabled={status === "loading"}
+              onClick={onCheckForUpdates}
+              className="gap-1.5"
+            >
+              <RefreshCwIcon className={`size-3.5 ${status === "loading" ? "animate-spin" : ""}`} />
+              {t("settings.aboutCheckNowBtn")}
+            </Button>
           </InfoRow>
           <InfoRow label={t("settings.aboutAuthor")}>
             <Button

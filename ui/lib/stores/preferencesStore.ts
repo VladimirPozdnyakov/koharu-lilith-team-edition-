@@ -17,6 +17,8 @@ type PreferencesState = {
   toggleFavoriteFont: (font: string) => void
   customSystemPrompt?: string
   setCustomSystemPrompt: (prompt?: string) => void
+  autoCheckUpdates: boolean
+  setAutoCheckUpdates: (enabled: boolean) => void
   shortcuts: {
     select: string
     block: string
@@ -47,6 +49,7 @@ const initialPreferences = {
     color: '#ffffff',
   },
   favoriteFonts: [],
+  autoCheckUpdates: true,
   shortcuts: {
     select: 'V',
     block: 'M',
@@ -86,6 +89,7 @@ export const usePreferencesStore = create<PreferencesState>()(
             : [...state.favoriteFonts, font],
         })),
       setCustomSystemPrompt: (prompt) => set({ customSystemPrompt: prompt }),
+      setAutoCheckUpdates: (enabled) => set({ autoCheckUpdates: enabled }),
       setShortcuts: (shortcuts) =>
         set((state) => ({
           shortcuts: {
@@ -152,6 +156,7 @@ export const usePreferencesStore = create<PreferencesState>()(
         defaultFont: state.defaultFont,
         favoriteFonts: state.favoriteFonts,
         customSystemPrompt: state.customSystemPrompt,
+        autoCheckUpdates: state.autoCheckUpdates,
         shortcuts: state.shortcuts,
         customPipeline: state.customPipeline,
       }),
