@@ -170,6 +170,13 @@ export function LlmModelSelect({
 }
 
 /** Last path segment — strips vendor prefixes like `anthropic/claude-…`. */
+function formatBytes(bytes: number): string {
+  if (bytes >= 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`
+  if (bytes >= 1024 * 1024) return `${Math.round(bytes / (1024 * 1024))} MB`
+  if (bytes >= 1024) return `${Math.round(bytes / 1024)} KB`
+  return `${bytes} B`
+}
+
 function shortModelName(name: string): string {
   const idx = name.lastIndexOf('/')
   return idx >= 0 && idx < name.length - 1 ? name.slice(idx + 1) : name
@@ -229,6 +236,11 @@ function ModelRow({
     >
       {provider && <ProviderBadge label={providerBadgeLabel(provider)} />}
       <span className='truncate'>{shortModelName(model.name)}</span>
+      {model.sizeBytes && (
+        <span className='ml-auto shrink-0 pl-2 text-[10px] tabular-nums text-muted-foreground'>
+          {formatBytes(model.sizeBytes)}
+        </span>
+      )}
       {selected && (
         <CheckIcon className='absolute top-1/2 right-2 size-3 -translate-y-1/2 text-primary' />
       )}

@@ -424,8 +424,47 @@ fn local_catalog_models() -> Vec<LlmCatalogModel> {
             target: local_target(model),
             name: model.to_string(),
             languages: language_tags(&model.languages()),
+            size_bytes: model_size_bytes(model),
         })
         .collect()
+}
+
+/// Approximate download sizes for local GGUF models (bytes). These are rough
+/// estimates based on the quantization and parameter count; the actual size
+/// may vary slightly.
+fn model_size_bytes(model: ModelId) -> Option<u64> {
+    const MB: u64 = 1024 * 1024;
+    match model {
+        ModelId::VntlLlama3_8Bv2 => Some(5700 * MB),
+        ModelId::Lfm2_5_1_2bInstruct => Some(800 * MB),
+        ModelId::SakuraGalTransl7Bv3_7 => Some(3400 * MB),
+        ModelId::Sakura1_5bQwen2_5v1_0 => Some(1000 * MB),
+        ModelId::HunyuanMT7B => Some(4400 * MB),
+        ModelId::Sugoi14bUltra => Some(8600 * MB),
+        ModelId::Sugoi32bUltra => Some(19800 * MB),
+        ModelId::Gemma4E2bIt => Some(1600 * MB),
+        ModelId::Gemma4E4bIt => Some(2600 * MB),
+        ModelId::Gemma4_12bIt => Some(7000 * MB),
+        ModelId::Gemma4_26bA4bIt => Some(14000 * MB),
+        ModelId::Gemma4_31bIt => Some(18000 * MB),
+        ModelId::Gemma4E2bUncensored => Some(1600 * MB),
+        ModelId::Gemma4E4bUncensored => Some(2600 * MB),
+        ModelId::Qwen3_5_0_8b => Some(600 * MB),
+        ModelId::Qwen3_5_2b => Some(1300 * MB),
+        ModelId::Qwen3_5_4b => Some(2600 * MB),
+        ModelId::Qwen3_5_9b => Some(5600 * MB),
+        ModelId::Qwen3_5_27b => Some(16500 * MB),
+        ModelId::Qwen3_5_35bA3b => Some(21000 * MB),
+        ModelId::Qwen3_6_27b => Some(16500 * MB),
+        ModelId::Qwen3_6_35bA3b => Some(21000 * MB),
+        ModelId::Qwen3_5_2bUncensored => Some(1300 * MB),
+        ModelId::Qwen3_5_4bUncensored => Some(2600 * MB),
+        ModelId::Qwen3_5_9bUncensored => Some(5600 * MB),
+        ModelId::Qwen3_5_27bUncensored => Some(16500 * MB),
+        ModelId::Qwen3_5_35bA3bUncensored => Some(21000 * MB),
+        ModelId::Qwen3_6_27bUncensored => Some(16500 * MB),
+        ModelId::Qwen3_6_35bA3bUncensored => Some(21000 * MB),
+    }
 }
 
 async fn provider_catalog(
@@ -476,6 +515,7 @@ async fn provider_catalog(
                                         target: provider_target(descriptor.id, &m.id),
                                         name: m.name,
                                         languages: descriptor.supported_languages.tags(),
+                                        size_bytes: None,
                                     })
                                     .collect(),
                             ),
@@ -518,6 +558,7 @@ fn static_provider_models(descriptor: &ProviderDescriptor) -> Vec<LlmCatalogMode
                 target: provider_target(descriptor.id, m.id),
                 name: m.name.to_string(),
                 languages: descriptor.supported_languages.tags(),
+                size_bytes: None,
             })
             .collect(),
         ProviderCatalogModels::Dynamic(_) => Vec::new(),

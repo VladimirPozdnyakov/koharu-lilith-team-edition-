@@ -2188,6 +2188,15 @@
           "name": {
             "type": "string"
           },
+          "sizeBytes": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "format": "int64",
+            "description": "Approximate download size in bytes (for local models only). `None`\nfor cloud providers (no download needed).",
+            "minimum": 0
+          },
           "target": {
             "$ref": "#/components/schemas/LlmTarget"
           }

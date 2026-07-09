@@ -7,5 +7,12 @@ import type { LlmTarget } from './llmTarget';
 export interface LlmCatalogModel {
   languages: string[];
   name: string;
+  /**
+     * Approximate download size in bytes (for local models only). `None`
+     * for cloud providers (no download needed).
+     * @minimum 0
+     * @nullable
+     */
+  sizeBytes?: number | null;
   target: LlmTarget;
 }

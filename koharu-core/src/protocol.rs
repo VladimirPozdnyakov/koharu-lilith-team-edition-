@@ -116,6 +116,10 @@ pub struct LlmCatalogModel {
     pub target: LlmTarget,
     pub name: String,
     pub languages: Vec<String>,
+    /// Approximate download size in bytes (for local models only). `None`
+    /// for cloud providers (no download needed).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub size_bytes: Option<u64>,
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, JsonSchema, ToSchema)]
