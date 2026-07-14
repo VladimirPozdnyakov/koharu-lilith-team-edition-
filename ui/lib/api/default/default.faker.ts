@@ -15,6 +15,7 @@ import {
   LlmTargetKind,
   MaskRole,
   PipelineStep,
+  TextAlign,
   TextDirection
 } from '../schemas';
 import type {

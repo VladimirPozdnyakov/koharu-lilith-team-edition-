@@ -183,11 +183,8 @@ export async function uploadPagesByPaths(paths: string[], replace: boolean): Pro
 }
 
 export async function uploadKhrArchive(file: File): Promise<ProjectSummary> {
-  const bytes = await file.arrayBuffer()
-  const summary = await importProject({
-    body: bytes,
-    headers: { 'Content-Type': 'application/zip' },
-  })
+  const blob = new Blob([await file.arrayBuffer()], { type: 'application/zip' })
+  const summary = await importProject(blob)
   await invalidateScene()
   return summary
 }
