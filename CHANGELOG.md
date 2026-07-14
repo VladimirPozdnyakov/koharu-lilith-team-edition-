@@ -6,6 +6,7 @@
 - Replaced the mascot logo with an abstract placeholder.
 - Simplified the editor UI: Border/Stroke controls collapse under "Advanced", reduced uppercase-micro-label noise across panels, tabs, and settings.
 - Restricted UI locales to English and Russian.
+- Updater endpoint points to the fork repository.
 
 ### ✨ Added
 
@@ -13,6 +14,19 @@
 - Export OCR text + translation to `.txt` (current page and whole project, parallel "OCR → translation" format).
 - Optional `flash-attn` Cargo feature (off by default) to accelerate FLUX.2 Klein inpainting on CUDA.
 - Windows build recipe in README (NVCC flags, LLVM/libclang, Vulkan Runtime).
+- Render presets: unlimited global style snapshots (font+size+color+stroke+effects+align), export/import, apply to selected/all blocks.
+- Find & Replace across all translation fields of a project (regex, case-sensitive, OCR option).
+- Per-stage pipeline timings + ETA in the progress card.
+- Glossaries: multiple switchable glossaries injected into the LLM system prompt, with term highlighting in OCR, autocomplete in translation, and quick-add from block.
+- Translation cache: multi-variant per-source-text cache (by provider/model/prompt/glossary hash), transparent partial-hit with LLM skip, UI variant selection via context menu.
+- Batch processing: "Process Selected Pages" for Ctrl-clicked Navigator pages.
+- Context menus (right-click) everywhere: TextBlocksPanel (generate/glossary/copy/variants/delete), Navigator (export/delete), Canvas (glossary/copy/find-replace/delete).
+- Reading-order fix: blocks now sort geometrically by RTL/LTR; manual drag-reorder in custom mode.
+- Fork info in Settings → About (fork author + repository links).
+- Line-height and letter-spacing render controls (Advanced section).
+- Collapsible right panel (Toggle Panels in View menu).
+- Updater auto-check toggle + manual "Check now" button.
+- LLM model sizes displayed in the model selector before download.
 
 ### ➖ Removed
 
