@@ -482,6 +482,7 @@ function BlockCard({
                         variant='ghost'
                         size='icon-xs'
                         className='size-5'
+                        aria-label={t('glossary.addFromBlock')}
                         disabled={!hasOcr}
                         onClick={() => {
                           const el = ocrRef.current
@@ -529,7 +530,7 @@ function BlockCard({
                     }}
                     className='h-6 px-1.5 text-[11px]'
                   />
-                  <Button size='icon-xs' className='size-6 shrink-0' onClick={handleAddTerm} disabled={!termTarget.trim()}>
+                  <Button size='icon-xs' className='size-6 shrink-0' aria-label={t('glossary.addTerm')} onClick={handleAddTerm} disabled={!termTarget.trim()}>
                     <PlusIcon className='size-3' />
                   </Button>
                 </div>
@@ -600,6 +601,7 @@ function BlockCard({
                     </span>
                     <button
                       type='button'
+                      aria-label={t('common.cancel')}
                       onClick={() => setVariants(null)}
                       className='text-[10px] text-muted-foreground hover:text-foreground'
                     >

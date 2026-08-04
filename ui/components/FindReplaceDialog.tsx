@@ -157,38 +157,48 @@ export function FindReplaceDialog({
 
         <div className='flex flex-col gap-3'>
           <div className='flex items-center gap-2'>
-            <SearchIcon className='size-4 shrink-0 text-muted-foreground' />
+            <SearchIcon className='size-4 shrink-0 text-muted-foreground' aria-hidden='true' />
             <Input
               autoFocus
               value={find}
               onChange={(e) => setFind(e.target.value)}
               placeholder={t('findReplace.findPlaceholder')}
+              aria-label={t('findReplace.findPlaceholder')}
               className='h-8'
             />
           </div>
           <div className='flex items-center gap-2'>
-            <ReplaceIcon className='size-4 shrink-0 text-muted-foreground' />
+            <ReplaceIcon className='size-4 shrink-0 text-muted-foreground' aria-hidden='true' />
             <Input
               value={replace}
               onChange={(e) => setReplace(e.target.value)}
               placeholder={t('findReplace.replacePlaceholder')}
+              aria-label={t('findReplace.replacePlaceholder')}
               className='h-8'
             />
           </div>
 
           <div className='flex items-center gap-4'>
             <label className='flex items-center gap-2 text-xs text-muted-foreground'>
-              <Switch checked={caseSensitive} onCheckedChange={setCaseSensitive} />
-              <CaseSensitiveIcon className='size-3.5' />
+              <Switch
+                checked={caseSensitive}
+                onCheckedChange={setCaseSensitive}
+                aria-label={t('findReplace.caseSensitive')}
+              />
+              <CaseSensitiveIcon className='size-3.5' aria-hidden='true' />
               {t('findReplace.caseSensitive')}
             </label>
             <label className='flex items-center gap-2 text-xs text-muted-foreground'>
-              <Switch checked={includeOcr} onCheckedChange={setIncludeOcr} />
+              <Switch
+                checked={includeOcr}
+                onCheckedChange={setIncludeOcr}
+                aria-label={t('findReplace.includeOcr')}
+              />
               {t('findReplace.includeOcr')}
             </label>
           </div>
 
-          <p className='text-xs text-muted-foreground'>
+          <p className='text-xs text-muted-foreground' role='status' aria-live='polite'>
             {matches.length > 0
               ? t('findReplace.matchesFound', { count: matches.length })
               : find

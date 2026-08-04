@@ -591,28 +591,34 @@ function MacOSControls() {
     <div className="flex h-full items-center gap-2 pr-2 pl-4">
       <button
         onClick={() => void windowControls.close()}
+        aria-label="Close"
         className="group flex size-3 items-center justify-center rounded-full bg-[#FF5F57] active:bg-[#bf4942]"
       >
         <XIcon
           className="size-2 text-[#4a0002] opacity-0 group-hover:opacity-100"
+          aria-hidden="true"
           strokeWidth={3}
         />
       </button>
       <button
         onClick={() => void windowControls.minimize()}
+        aria-label="Minimize"
         className="group flex size-3 items-center justify-center rounded-full bg-[#FEBC2E] active:bg-[#bf8d22]"
       >
         <MinusIcon
           className="size-2 text-[#5f4a00] opacity-0 group-hover:opacity-100"
+          aria-hidden="true"
           strokeWidth={3}
         />
       </button>
       <button
         onClick={() => void windowControls.toggleMaximize()}
+        aria-label="Maximize"
         className="group flex size-3 items-center justify-center rounded-full bg-[#28C840] active:bg-[#1e9630]"
       >
         <SquareIcon
           className="size-1.5 text-[#006500] opacity-0 group-hover:opacity-100"
+          aria-hidden="true"
           strokeWidth={3}
         />
       </button>
@@ -638,27 +644,30 @@ function WindowControls() {
     <div className="flex h-full">
       <button
         onClick={() => void windowControls.minimize()}
+        aria-label="Minimize"
         className="flex h-full w-11 items-center justify-center hover:bg-accent"
       >
-        <MinusIcon className="size-4" />
+        <MinusIcon className="size-4" aria-hidden="true" />
       </button>
       <button
         onClick={() => {
           void windowControls.toggleMaximize().then(updateMaximized);
         }}
+        aria-label={maximized ? "Restore" : "Maximize"}
         className="flex h-full w-11 items-center justify-center hover:bg-accent"
       >
         {maximized ? (
-          <CopyIcon className="size-3.5" />
+          <CopyIcon className="size-3.5" aria-hidden="true" />
         ) : (
-          <SquareIcon className="size-3.5" />
+          <SquareIcon className="size-3.5" aria-hidden="true" />
         )}
       </button>
       <button
         onClick={() => void windowControls.close()}
+        aria-label="Close"
         className="flex h-full w-11 items-center justify-center hover:bg-red-500 hover:text-white"
       >
-        <XIcon className="size-4" />
+        <XIcon className="size-4" aria-hidden="true" />
       </button>
     </div>
   );

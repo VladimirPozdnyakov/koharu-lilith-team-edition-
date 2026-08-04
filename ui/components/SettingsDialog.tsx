@@ -348,6 +348,7 @@ export function SettingsDialog({
                 key={id}
                 onClick={() => setTab(id)}
                 data-active={tab === id}
+                aria-current={tab === id ? "page" : undefined}
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition hover:text-foreground data-[active=true]:bg-accent data-[active=true]:text-accent-foreground"
               >
                 <Icon className="size-4 shrink-0" />
@@ -489,6 +490,7 @@ function AppearancePane() {
               key={value}
               onClick={() => setTheme(value)}
               data-active={theme === value}
+              aria-pressed={theme === value}
               className="flex flex-col items-center gap-2 rounded-xl border border-border bg-card px-4 py-4 text-muted-foreground transition hover:border-foreground/30 data-[active=true]:border-primary data-[active=true]:text-foreground"
             >
               <Icon className="size-5" />

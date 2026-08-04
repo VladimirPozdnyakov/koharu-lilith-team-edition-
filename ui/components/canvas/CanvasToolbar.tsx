@@ -322,6 +322,7 @@ function LlmStatusPopover() {
           data-testid='llm-trigger'
           data-llm-ready={llmReady ? 'true' : 'false'}
           data-llm-loading={indicatorBusy ? 'true' : 'false'}
+          aria-label={llmReady ? t('llm.statusReady') : t('llm.statusNotReady')}
           className={`flex h-6 cursor-pointer items-center gap-1.5 rounded-full px-2.5 text-[11px] font-medium shadow-sm transition hover:opacity-80 ${
             llmReady
               ? 'bg-primary text-white ring-1 ring-primary/30'
@@ -331,6 +332,7 @@ function LlmStatusPopover() {
           }`}
         >
           <motion.span
+            aria-hidden='true'
             className={`size-1.5 rounded-full ${
               llmReady ? 'bg-white' : indicatorBusy ? 'bg-white' : 'bg-muted-foreground/40'
             }`}

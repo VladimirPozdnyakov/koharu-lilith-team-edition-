@@ -149,6 +149,8 @@
     "title": "LLM",
     "ready": "Ready",
     "idle": "Idle",
+    "statusReady": "LLM ready",
+    "statusNotReady": "LLM not ready",
     "selectPlaceholder": "Select model",
     "model": "Model",
     "translationSettings": "Translation",

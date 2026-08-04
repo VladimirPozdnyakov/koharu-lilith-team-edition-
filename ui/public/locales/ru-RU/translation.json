@@ -135,6 +135,8 @@
     "title": "LLM",
     "ready": "Готова",
     "idle": "Неактивна",
+    "statusReady": "LLM готова",
+    "statusNotReady": "LLM не готова",
     "selectPlaceholder": "Выберите модель",
     "model": "Модель",
     "translationSettings": "Перевод",

@@ -169,6 +169,7 @@ export function Navigator() {
             size='icon'
             data-testid='navigator-manage-pages'
             className='h-6 w-6'
+            aria-label={t('navigator.pageManager.title')}
             onClick={() => setPageManagerOpen(true)}
             title={t('navigator.pageManager.title')}
           >
@@ -253,6 +254,7 @@ const PagePreview = memo(function PagePreview({
         <div
           role='button'
           tabIndex={0}
+          aria-label={`Page ${index + 1}`}
           onClick={(e) => onSelect(pageId, e)}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
@@ -285,7 +287,8 @@ const PagePreview = memo(function PagePreview({
             variant='destructive'
             size='icon'
             data-testid={`navigator-page-delete-${index}`}
-            className='absolute top-1.5 right-1.5 h-6 w-6 rounded-full opacity-0 shadow-md transition-opacity duration-200 group-hover:opacity-100 hover:scale-105'
+            className='absolute top-1.5 right-1.5 h-6 w-6 rounded-full opacity-0 shadow-md transition-opacity duration-200 group-hover:opacity-100 hover:scale-105 focus-visible:opacity-100'
+            aria-label={t('navigator.deletePage')}
             onClick={(e) => {
               e.stopPropagation()
               onDelete(pageId)

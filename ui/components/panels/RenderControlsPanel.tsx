@@ -486,6 +486,7 @@ export function RenderControlsPanel() {
                 size='icon-sm'
                 className='size-7 shrink-0'
                 disabled={!hasNodes}
+                aria-label={t('render.presetSave')}
                 onClick={() => {
                   setPresetName('')
                   setNamingPreset(true)
@@ -508,6 +509,7 @@ export function RenderControlsPanel() {
                 size='icon-sm'
                 className='size-7 shrink-0'
                 disabled={!hasNodes}
+                aria-label={t('render.presetApplyToAll')}
                 onClick={() => {
                   const preset = presets.find((p) => p.id === activePresetId)
                   if (preset) applyStyleToAll(preset.style)
@@ -528,6 +530,7 @@ export function RenderControlsPanel() {
               variant='outline'
               size='icon-sm'
               className='size-7 shrink-0'
+              aria-label={t('render.presetManage')}
               onClick={() => setPresetsOpen(true)}
             >
               <ListPlusIcon className='size-3.5' />
@@ -696,6 +699,7 @@ export function RenderControlsPanel() {
             size='icon-sm'
             className='size-6 shrink-0 rounded-r-none border-r'
             disabled={!selectedNode}
+            aria-label={t('render.fontSizeLabel') + ' −'}
             onClick={() => {
               const next = Math.max(6, Math.round((currentFontSize ?? 16) - 1))
               applyStyleToSelected({ fontSize: next })
@@ -726,6 +730,7 @@ export function RenderControlsPanel() {
             size='icon-sm'
             className='size-6 shrink-0 rounded-l-none border-l'
             disabled={!selectedNode}
+            aria-label={t('render.fontSizeLabel') + ' +'}
             onClick={() => {
               const next = Math.min(300, Math.round((currentFontSize ?? 16) + 1))
               applyStyleToSelected({ fontSize: next })
@@ -746,6 +751,7 @@ export function RenderControlsPanel() {
                     variant='outline'
                     size='icon-sm'
                     aria-label={item.label}
+                    aria-pressed={active}
                     data-testid={`render-effect-toggle-${item.key}`}
                     className={cn(
                       'size-6 shrink-0',
@@ -786,6 +792,7 @@ export function RenderControlsPanel() {
                     variant='outline'
                     size='icon-sm'
                     aria-label={item.label}
+                    aria-pressed={active}
                     data-testid={`render-align-${item.value}`}
                     disabled={!hasNodes}
                     className={cn(
@@ -835,6 +842,8 @@ export function RenderControlsPanel() {
                   <Button
                     variant='outline'
                     size='icon-sm'
+                    aria-label={t('render.effectBorder')}
+                    aria-pressed={currentStroke.enabled}
                     data-testid='render-stroke-enable'
                     className={cn(
                       'size-7 shrink-0',
@@ -888,6 +897,7 @@ export function RenderControlsPanel() {
                   variant='ghost'
                   size='icon-sm'
                   className='size-7 shrink-0 rounded-r-none border-r'
+                  aria-label={t('render.strokeWidthLabel') + ' −'}
                   onClick={() => updateStrokeWidth(currentStrokeWidth - STROKE_WIDTH_STEP)}
                 >
                   <MinusIcon className='size-3' />
@@ -914,6 +924,7 @@ export function RenderControlsPanel() {
                   variant='ghost'
                   size='icon-sm'
                   className='size-7 shrink-0 rounded-l-none border-l'
+                  aria-label={t('render.strokeWidthLabel') + ' +'}
                   onClick={() => updateStrokeWidth(currentStrokeWidth + STROKE_WIDTH_STEP)}
                 >
                   <PlusIcon className='size-3' />

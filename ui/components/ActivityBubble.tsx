@@ -55,7 +55,13 @@ function BubbleCard({ children }: { children: ReactNode }) {
 function ProgressBar({ percent }: { percent?: number }) {
   return (
     <div className='mt-3 flex items-center gap-2'>
-      <div className='relative h-1.5 flex-1 overflow-hidden rounded-full bg-muted'>
+      <div
+        className='relative h-1.5 flex-1 overflow-hidden rounded-full bg-muted'
+        role='progressbar'
+        aria-valuenow={typeof percent === 'number' ? percent : undefined}
+        aria-valuemin={0}
+        aria-valuemax={100}
+      >
         {typeof percent === 'number' ? (
           <div
             className='h-full rounded-full bg-primary transition-[width] duration-700 ease-out'
@@ -109,7 +115,11 @@ function ErrorCard({
   t: TranslateFunc
 }) {
   return (
-    <div className='rounded-2xl border border-red-200/80 bg-card/95 p-4 shadow-[0_15px_60px_rgba(0,0,0,0.12)] backdrop-blur dark:border-red-900/80'>
+    <div
+      className='rounded-2xl border border-red-200/80 bg-card/95 p-4 shadow-[0_15px_60px_rgba(0,0,0,0.12)] backdrop-blur dark:border-red-900/80'
+      role='alert'
+      aria-live='assertive'
+    >
       <div className='flex items-start gap-3'>
         <div className='mt-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-950/70 dark:text-red-400'>
           <CircleXIcon className='size-4' />
@@ -264,7 +274,11 @@ export function ActivityBubble() {
   if (!errorMessage && runningJobs.length === 0 && activeDownloads.length === 0) return null
 
   return (
-    <div className='pointer-events-auto fixed right-6 bottom-6 z-100 flex w-80 max-w-[calc(100%-1.5rem)] flex-col gap-3'>
+    <div
+      className='pointer-events-auto fixed right-6 bottom-6 z-100 flex w-80 max-w-[calc(100%-1.5rem)] flex-col gap-3'
+      role='status'
+      aria-live='polite'
+    >
       {errorMessage && <ErrorCard message={errorMessage} onDismiss={clearUiError} t={t} />}
       {runningJobs.map((job) => (
         <JobCard key={job.id} job={job} onCancel={() => void cancelOperation(job.id)} t={t} />

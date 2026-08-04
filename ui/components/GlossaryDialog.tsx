@@ -104,7 +104,7 @@ export function GlossaryDialog({
           <div className='flex items-center gap-1'>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant='outline' size='icon-sm' className='size-7' onClick={() => addGlossary(t('glossary.defaultName'))}>
+                <Button variant='outline' size='icon-sm' className='size-7' aria-label={t('glossary.newGlossary')} onClick={() => addGlossary(t('glossary.defaultName'))}>
                   <BookPlusIcon className='size-3.5' />
                 </Button>
               </TooltipTrigger>
@@ -117,6 +117,7 @@ export function GlossaryDialog({
                   size='icon-sm'
                   className='size-7'
                   disabled={glossaries.length === 0}
+                  aria-label={t('glossary.exportAll')}
                   onClick={() => void handleExportAll()}
                 >
                   <DownloadIcon className='size-3.5' />
@@ -126,7 +127,7 @@ export function GlossaryDialog({
             </Tooltip>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant='outline' size='icon-sm' className='size-7' onClick={() => void handleImport()}>
+                <Button variant='outline' size='icon-sm' className='size-7' aria-label={t('glossary.import')} onClick={() => void handleImport()}>
                   <UploadIcon className='size-3.5' />
                 </Button>
               </TooltipTrigger>
@@ -151,11 +152,20 @@ export function GlossaryDialog({
                     return (
                       <li
                         key={g.id}
+                        role='button'
+                        tabIndex={0}
+                        aria-label={g.name}
                         className={cn(
-                          'group flex items-center gap-1.5 px-2 py-1.5 text-xs cursor-pointer',
+                          'group flex items-center gap-1.5 px-2 py-1.5 text-xs cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
                           isSel ? 'bg-accent' : 'hover:bg-accent/50',
                         )}
                         onClick={() => setSelectedId(g.id)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault()
+                            setSelectedId(g.id)
+                          }
+                        }}
                       >
                         <button
                           type='button'
@@ -194,7 +204,7 @@ export function GlossaryDialog({
                   <div className='flex shrink-0 items-center gap-0.5'>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <Button variant='ghost' size='icon-xs' className='size-6' onClick={() => void handleExportOne(selected)}>
+                        <Button variant='ghost' size='icon-xs' className='size-6' aria-label={t('glossary.exportOne')} onClick={() => void handleExportOne(selected)}>
                           <DownloadIcon className='size-3.5' />
                         </Button>
                       </TooltipTrigger>
@@ -202,7 +212,7 @@ export function GlossaryDialog({
                     </Tooltip>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <Button variant='ghost' size='icon-xs' className='size-6' onClick={() => duplicateGlossary(selected.id)}>
+                        <Button variant='ghost' size='icon-xs' className='size-6' aria-label={t('glossary.duplicate')} onClick={() => duplicateGlossary(selected.id)}>
                           <CopyIcon className='size-3.5' />
                         </Button>
                       </TooltipTrigger>
@@ -214,6 +224,7 @@ export function GlossaryDialog({
                           variant='ghost'
                           size='icon-xs'
                           className='size-6 text-destructive hover:text-destructive'
+                          aria-label={t('glossary.delete')}
                           onClick={() => {
                             removeGlossary(selected.id)
                             setSelectedId(null)
@@ -265,6 +276,7 @@ export function GlossaryDialog({
                                 variant='ghost'
                                 size='icon-xs'
                                 className='size-6 text-destructive hover:text-destructive'
+                                aria-label={t('common.delete')}
                                 onClick={() => removeEntry(selected.id, i)}
                               >
                                 <Trash2Icon className='size-3' />
@@ -297,7 +309,7 @@ export function GlossaryDialog({
                       if (e.key === 'Enter') handleAddEntry()
                     }}
                   />
-                  <Button size='icon-sm' className='size-7 shrink-0' onClick={handleAddEntry} disabled={!newSrc.trim() || !newTgt.trim()}>
+                  <Button size='icon-sm' className='size-7 shrink-0' aria-label={t('glossary.addTerm')} onClick={handleAddEntry} disabled={!newSrc.trim() || !newTgt.trim()}>
                     <PlusIcon className='size-3.5' />
                   </Button>
                 </div>

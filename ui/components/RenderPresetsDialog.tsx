@@ -91,6 +91,7 @@ export function RenderPresetsDialog({
                   size='icon-sm'
                   className='size-7'
                   disabled={presets.length === 0}
+                  aria-label={t('render.presetExportAll')}
                   onClick={() => void handleExportAll()}
                 >
                   <DownloadIcon className='size-3.5' />
@@ -104,6 +105,7 @@ export function RenderPresetsDialog({
                   variant='outline'
                   size='icon-sm'
                   className='size-7'
+                  aria-label={t('render.presetImport')}
                   onClick={() => void handleImport()}
                 >
                   <UploadIcon className='size-3.5' />
@@ -152,6 +154,7 @@ export function RenderPresetsDialog({
                           variant='ghost'
                           size='icon-xs'
                           className='size-6'
+                          aria-label={t('render.presetExportOne')}
                           onClick={() => void handleExportOne(preset)}
                         >
                           <DownloadIcon className='size-3.5' />
@@ -166,6 +169,7 @@ export function RenderPresetsDialog({
                           variant='ghost'
                           size='icon-xs'
                           className='size-6'
+                          aria-label={t('render.presetRename')}
                           onClick={() => {
                             setEditingId(preset.id)
                             setDraftName(preset.name)
@@ -183,6 +187,7 @@ export function RenderPresetsDialog({
                           variant='ghost'
                           size='icon-xs'
                           className='size-6'
+                          aria-label={t('render.presetDuplicate')}
                           onClick={() => duplicatePreset(preset.id)}
                         >
                           <CopyIcon className='size-3.5' />
@@ -197,6 +202,7 @@ export function RenderPresetsDialog({
                           variant='ghost'
                           size='icon-xs'
                           className='size-6 text-destructive hover:text-destructive'
+                          aria-label={t('render.presetDelete')}
                           onClick={() => removePreset(preset.id)}
                         >
                           <Trash2Icon className='size-3.5' />
